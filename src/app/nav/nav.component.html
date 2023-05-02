@@ -1,0 +1,40 @@
+<!-- <div *ngIf="hero.name">
+  <h2>{{ hero.name | uppercase }} Details</h2>
+  <div><span>id: </span>{{ hero.id }}</div>
+  <div><span>name: </span>{{ hero.name }}</div>
+</div>
+
+<div>
+  <label for="name">Hero name:{{ name }} </label>
+  <input [(ngModel)]="hero.name" #ctrl="ngModel" required />
+  <button (click)="setValue()">Set value</button>
+</div>
+
+<h2>My Heroes</h2>
+<ul>
+  <li *ngFor="let people of list">
+    <span [class.ok]="people === hero.name">{{ people }}</span>
+    <button (click)="select(people)">select people</button>
+  </li>
+</ul>
+ -->
+<div class="nav-container">
+  <button>
+    <ng-icon name="ionAdd" size="22" />
+    New chat
+  </button>
+  <div></div>
+  <div>
+    <hr />
+    <div class="upgrade">
+      <ng-icon name="ionPersonOutline" size="20" />
+      <span>Upgrade to Plus</span>
+    </div>
+    <div class="user-information">
+      <img src="https://static.jhairparis.com/avatar.png" alt="image profile" />
+      <span>User Name</span>
+
+      <ng-icon name="ionEllipsisHorizontal" size="20" />
+    </div>
+  </div>
+</div>

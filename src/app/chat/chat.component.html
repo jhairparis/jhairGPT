@@ -1,0 +1,33 @@
+<div class="chat">
+  <div class="welcome">
+    <div class="title">
+      <h1>JhairGPT</h1>
+    </div>
+    <div class="about">
+      <div class="item" *ngFor="let item of about">
+        <div class="header">
+          <ng-icon name="{{ item.icon }}" size="25" />
+          <span>{{ item.name }}</span>
+        </div>
+        <div class="content">
+          <button *ngFor="let content of item.content">{{ content }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="input-container">
+    <div class="inputBox">
+      <textarea name="input" placeholder="Send a message."></textarea>
+      <button>
+        <ng-icon name="ionSendSharp" size="20" />
+      </button>
+    </div>
+    <div class="warning">
+      <span
+        >Free Research Preview, JhairGPT may produce inaccurate information
+        about people, places, or facts
+      </span>
+      <a href="http://jhairparis.com/projects/gpt">JhairGPT forever Version</a>
+    </div>
+  </div>
+</div>
