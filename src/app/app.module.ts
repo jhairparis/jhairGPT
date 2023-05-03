@@ -20,9 +20,10 @@ import { ChatComponent } from './chat/chat.component';
 import { MessagesComponent } from './messages/messages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ViewChatsComponent } from './view-chats/view-chats.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 @NgModule({
-  declarations: [AppComponent, NavComponent, ChatComponent, MessagesComponent, DashboardComponent, ViewChatsComponent],
+  declarations: [AppComponent, NavComponent, ChatComponent, MessagesComponent, DashboardComponent, ViewChatsComponent, PageNotFoundComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
