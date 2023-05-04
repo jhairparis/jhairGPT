@@ -1,5 +1,5 @@
 <div class="chat">
-  <div class="welcome">
+  <div class="welcome" *ngIf="welcome">
     <div class="title">
       <h1>JhairGPT</h1>
     </div>
@@ -15,10 +15,16 @@
       </div>
     </div>
   </div>
+  <app-messages *ngIf="!welcome" />
   <div class="input-container">
     <div class="inputBox">
-      <textarea name="input" placeholder="Send a message."></textarea>
-      <button>
+      <textarea
+        name="input"
+        placeholder="Send a message."
+        [(ngModel)]="prompt"
+        #ctrl="ngModel"
+      ></textarea>
+      <button (click)="sendPrompt()">
         <ng-icon name="ionSendSharp" size="20" />
       </button>
     </div>

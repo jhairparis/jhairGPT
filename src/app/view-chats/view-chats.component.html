@@ -1,1 +1,8 @@
-<p>view-chats works!</p>
+<div class="view-chats">
+  <ol>
+    <li *ngFor="let item of previousChats">
+      <ng-icon name="ionChatboxOutline" class="icon" size="20" />
+      <a href="{{ item.link }}">{{ item.name }}</a>
+    </li>
+  </ol>
+</div>

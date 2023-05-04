@@ -41,4 +41,15 @@ export class ChatComponent {
       ],
     },
   ];
+  welcome = true;
+
+  prompt = '';
+  setPrompt(text: string) {
+    this.prompt = text;
+  }
+
+  sendPrompt() {
+    this.welcome = false;
+    console.log(this.prompt);
+  }
 }
