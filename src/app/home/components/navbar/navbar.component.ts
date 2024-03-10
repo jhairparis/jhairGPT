@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [NgIcon],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })

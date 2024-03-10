@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-bubble',
   standalone: true,
-  imports: [],
+  imports: [NgIcon],
   templateUrl: './bubble.component.html',
   styleUrl: './bubble.component.css',
 })

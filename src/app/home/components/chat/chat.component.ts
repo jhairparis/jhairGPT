@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { BubbleComponent } from '../bubble/bubble.component';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [BubbleComponent, NavbarComponent],
+  imports: [BubbleComponent, NavbarComponent, NgIcon],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css',
 })
