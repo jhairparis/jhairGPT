@@ -1,95 +1,79 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BubbleComponent } from '../bubble/bubble.component';
 import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NgIcon } from '@ng-icons/core';
+import { BackendService } from '../../../src/services/backend.service';
+import { CommonModule } from '@angular/common';
+import { MessageComponent } from './message/message.component';
+import { AutosizeModule } from 'ngx-autosize';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [BubbleComponent, NavbarComponent, NgIcon],
+  imports: [
+    CommonModule,
+    BubbleComponent,
+    NavbarComponent,
+    NgIcon,
+    FormsModule,
+    MessageComponent,
+    AutosizeModule,
+  ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css',
 })
 export class ChatComponent {
-  id?: number;
-  paramsSub: any;
+  private activatedRoute = inject(ActivatedRoute);
+  private backendService = inject(BackendService);
+  private chatId = this.activatedRoute.snapshot.params['id'];
 
-  constructor(private activatedRoute: ActivatedRoute) {}
+  time = new Date();
+  textInput = '';
+  isLoading = false;
+  newMessages: any[] = [];
+  counter = 0;
 
-  ngOnInit() {
-    this.paramsSub = this.activatedRoute.params.subscribe(
-      (params) => (this.id = parseInt(params['id'], 10))
-    );
-  }
+  chatting() {
+    const message = this.textInput.trim();
+    this.isLoading = true;
 
-  ngOnDestroy() {
-    this.paramsSub.unsubscribe();
-  }
+    this.backendService
+      .chatting(message, this.chatId, 'gemini-1.0-pro')
+      .subscribe({
+        next: ({ result }) => {
+          const bubbles = {
+            user: this.textInput,
+            ai: result,
+          };
 
-  async getChats() {
-    try {
-      const options = { method: 'GET' };
-      const res = await fetch('https://jhairparis.com/api/projects', options);
-      const data = await res.json();
-      this.previousChats = data.map((e: any, i: number) => {
-        id: i;
-        name: e.name;
-        link: e.preview;
+          this.newMessages = [...this.newMessages, bubbles];
+          this.isLoading = false;
+          this.textInput = '';
+        },
+        error: (err) => {
+          console.error(err);
+          this.isLoading = false;
+        },
       });
-    } catch (error: any) {
-      console.log('error', error.message);
+  }
+
+  isTouchScren() {
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      return true;
+    }
+    return false;
+  }
+
+  newLine() {
+    if (!this.isTouchScren()) this.textInput += '';
+  }
+
+  onSubmit(e: Event) {
+    if (!this.isTouchScren()) {
+      e.preventDefault();
+      this.chatting();
     }
   }
-
-  previousChats = [
-    {
-      id: 1,
-      message: 'Good morning',
-      author: 'juan',
-      timestamp: new Date(),
-    },
-    {
-      id: 2,
-      message: 'Good Bye!',
-      author: 'juan',
-      timestamp: new Date(),
-    },
-    {
-      id: 3,
-      message: 'Good Bye!',
-      author: 'juan',
-      timestamp: new Date(),
-    },
-    {
-      id: 3,
-      message: 'Good Bye!',
-      author: 'juan',
-      timestamp: new Date(),
-    },
-    {
-      id: 3,
-      message: 'Good Bye!',
-      author: 'juan',
-      timestamp: new Date(),
-    },
-    {
-      id: 3,
-      message: 'Good Bye!',
-      author: 'juan',
-      timestamp: new Date(),
-    },
-    {
-      id: 3,
-      message: 'Good Bye!',
-      author: 'juan',
-      timestamp: new Date(),
-    },
-    {
-      id: 3,
-      message: 'Good Bye!',
-      author: 'juan',
-      timestamp: new Date(),
-    },
-  ];
 }

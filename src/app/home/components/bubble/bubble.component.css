@@ -1,0 +1,71 @@
+:host ::ng-deep h2 {
+  @apply font-medium text-gray-800 dark:text-white;
+}
+
+:host ::ng-deep p {
+  @apply mb-1.5 text-sm text-gray-800 dark:text-white;
+}
+
+:host ::ng-deep ul {
+  @apply list-disc list-inside space-y-1.5 ps-3.5;
+}
+
+:host ::ng-deep ul li {
+  @apply text-sm text-gray-800 dark:text-white;
+}
+
+:host ::ng-deep div.md-table:has(table) {
+  @apply bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700;
+}
+
+:host ::ng-deep div.md-table > div:first-child {
+  @apply -m-1.5 overflow-x-auto;
+}
+
+:host ::ng-deep div.md-table > div:first-child > div:first-child {
+  @apply p-1.5 min-w-full inline-block align-middle;
+}
+
+:host ::ng-deep table {
+  @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+:host ::ng-deep table thead {
+  @apply bg-gray-50 dark:bg-slate-800;
+}
+
+:host ::ng-deep table thead th {
+  @apply px-6 py-3 text-start;
+}
+
+:host ::ng-deep table thead th div {
+  @apply flex items-center gap-x-2;
+}
+
+:host ::ng-deep table thead th div span {
+  @apply text-xs font-extrabold uppercase tracking-wide text-gray-800 dark:text-gray-200;
+}
+
+:host ::ng-deep table tbody {
+  @apply divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+:host ::ng-deep table tbody td {
+  @apply size-px whitespace-nowrap;
+}
+
+:host ::ng-deep table tbody td div {
+  @apply px-6 py-3 block text-sm dark:text-gray-400;
+}
+
+:host ::ng-deep table tbody td div.center {
+  @apply text-center;
+}
+
+:host ::ng-deep table tbody td div.right {
+  @apply text-right;
+}
+
+:host ::ng-deep table tbody td div strong {
+  @apply dark:text-gray-100;
+}

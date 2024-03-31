@@ -1,74 +1,67 @@
 <app-navbar />
 <div class="relative h-screen w-full lg:ps-64">
   <div class="py-10 lg:py-14">
-    <!-- Title -->
     <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
       <h1 class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
         JhairGPT
       </h1>
     </div>
-    <!-- End Title -->
 
-    <ul class="mt-16 space-y-5">
-      @for (item of previousChats; track $index) {
-      <app-bubble
-        [message]="item.message"
-        [author]="item.author"
-        [timestamp]="item.timestamp"
-      />
-      }
-    </ul>
+    <app-message [newMessages]="newMessages" />
   </div>
 
-  <!-- Search -->
   <footer class="max-w-4xl mx-auto sticky bottom-0 z-10 p-3 sm:py-6">
-    <!-- Input -->
-    <div class="relative">
+    <div class="relative backdrop-blur-sm">
       <textarea
-        class="p-4 pb-12 block w-full bg-gray-100 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+        id="textarea-prompt"
+        autosize
+        [minRows]="1"
+        [maxRows]="10"
+        [(ngModel)]="textInput"
+        (keydown.enter)="onSubmit($event)"
+        (keydown.shift.enter)="newLine()"
+        [disabled]="isLoading"
+        class="block w-full p-4 pb-12 scroll-pb-12 overflow-hidden resize-none text-sm rounded-lg border text-gray-900 bg-gray-50 border-gray-300 transition duration-500 ease-in-out focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-90 disabled:pointer-events-none dark:text-white dark:bg-slate-900 dark:border-gray-700 dark:placeholder-gray-400"
         placeholder="Ask me anything..."
-        [value]="id"
       ></textarea>
 
-      <!-- Toolbar -->
       <div
-        class="absolute bottom-px inset-x-px p-2 rounded-b-md bg-gray-100 dark:bg-slate-800"
+        [class]="
+          'absolute bottom-px inset-x-px p-2 pr-0 mr-2.5 rounded-b-md bg-gray-50 dark:bg-slate-900' +
+          (isLoading ? ' opacity-0' : '')
+        "
       >
         <div class="flex justify-between items-center">
-          <!-- Button Group -->
-          <div class="flex items-center">
+          <div class="flex items-center gap-x-1">
             <button
-              title="Attach file or image to chat"
+              [disabled]="isLoading"
               type="button"
-              class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+              title="Voice message"
+              class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 disabled:hover:text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+            >
+              <ng-icon name="ionMicOutline" size="18" />
+            </button>
+            <button
+              [disabled]="isLoading"
+              type="button"
+              title="Attach file or image to chat"
+              class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 disabled:hover:text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
             >
               <ng-icon name="ionAttach" size="18" />
             </button>
           </div>
-          <!-- End Button Group -->
 
-          <div class="flex items-center gap-x-1">
-            <button
-              title="Voice message"
-              type="button"
-              class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            >
-              <ng-icon name="ionMicOutline" size="18" />
-            </button>
-
-            <button
-              title="Send message"
-              type="button"
-              class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-white bg-blue-600 hover:bg-blue-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            >
-              <ng-icon name="ionSend" size="18" />
-            </button>
-          </div>
+          <button
+            (click)="chatting()"
+            [disabled]="isLoading"
+            type="button"
+            title="Send message"
+            class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-white bg-blue-600 hover:bg-blue-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+          >
+            <ng-icon name="ionArrowUp" size="18" />
+          </button>
         </div>
       </div>
-      <!-- End Toolbar -->
     </div>
-    <!-- End Input -->
   </footer>
-  <!-- End Search -->
 </div>
