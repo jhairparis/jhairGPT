@@ -14,14 +14,21 @@
     <!-- Search -->
     <div class="mt-10 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8">
       <div class="relative">
-        <input
-          type="text"
+        <textarea
+          autofocus
+          autosize
+          [minRows]="1"
+          [maxRows]="10"
           [(ngModel)]="textInput"
           [disabled]="isAvailable"
-          (keyup.enter)="onEnterKeyPressed()"
-          class="p-4 block w-full border border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+          (keydown.enter)="onSubmit($event)"
+          (keydown.shift.enter)="newLine()"
+          (resized)="onResized($event)"
+          type="text"
+          class="block w-full p-4 pr-20 text-sm border resize-none text-gray-900 bg-gray-50 border-gray-300 outline-none textarea-transiton focus:ring-2 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-90 disabled:pointer-events-none dark:text-white dark:bg-slate-900 dark:border-gray-700 dark:placeholder-gray-400"
+          [style]="removeRounder ? 'border-radius: 0.5rem' : 'border-radius: 5rem'"
           placeholder="Ask me anything..."
-        />
+        ></textarea>
         <div class="absolute top-1/2 end-2 -translate-y-1/2">
           <button
             type="button"

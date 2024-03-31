@@ -37,10 +37,15 @@ export class ChatComponent {
 
   chatting() {
     const message = this.textInput.trim();
+
+    if (message === '') {
+      console.log('Input field is empty');
+      return;
+    }
     this.isLoading = true;
 
     this.backendService
-      .chatting(message, this.chatId, 'gemini-1.0-pro')
+      .chatting(this.textInput, this.chatId, 'gemini-1.0-pro')
       .subscribe({
         next: ({ result }) => {
           const bubbles = {
