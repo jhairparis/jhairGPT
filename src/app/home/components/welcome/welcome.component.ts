@@ -58,6 +58,10 @@ export class WelcomeComponent {
     });
   }
 
+  avalabelSend() {
+    return this.textInput.length >= 5;
+  }
+
   isTouchScren() {
     if (window.matchMedia('(pointer: coarse)').matches) {
       return true;

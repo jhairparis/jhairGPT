@@ -26,7 +26,9 @@
           (resized)="onResized($event)"
           type="text"
           class="block w-full p-4 pr-20 text-sm border resize-none text-gray-900 bg-gray-50 border-gray-300 outline-none textarea-transiton focus:ring-2 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-90 disabled:pointer-events-none dark:text-white dark:bg-slate-900 dark:border-gray-700 dark:placeholder-gray-400"
-          [style]="removeRounder ? 'border-radius: 0.5rem' : 'border-radius: 5rem'"
+          [style]="
+            removeRounder ? 'border-radius: 0.5rem' : 'border-radius: 5rem'
+          "
           placeholder="Ask me anything..."
         ></textarea>
         <div class="absolute top-1/2 end-2 -translate-y-1/2">
@@ -42,9 +44,24 @@
             type="button"
             title="Voice search"
             disabled
-            class="w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+            [class]="
+              avalabelSend() && isTouchScren()
+                ? 'hidden'
+                : 'w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600'
+            "
           >
             <ng-icon name="ionMicOutline" size="18" />
+          </button>
+          <button
+            type="button"
+            title="Send message"
+            [class]="
+              avalabelSend()
+                ? 'w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600'
+                : 'hidden'
+            "
+          >
+            <ng-icon name="ionArrowUp" size="18" />
           </button>
         </div>
       </div>
