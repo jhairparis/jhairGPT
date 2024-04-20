@@ -1,6 +1,39 @@
+@if (viewNavbar) {
 <app-navbar />
-<div class="relative h-screen w-full lg:ps-64">
-  <div class="py-10 lg:py-14">
+}
+
+<button
+  type="button"
+  title="Toogle navbar"
+  [class]="
+    'hidden lg:block ' +
+    (viewNavbar ? 'sticky z-20 left-64 top-1/2' : 'sticky z-20 left-0 top-1/2')
+  "
+  (click)="toogleNavbar()"
+>
+  @if (viewNavbar) {
+  <ng-icon
+    name="ionChevronForward"
+    size="24"
+    class="text-gray-800 dark:text-white"
+  />
+  }@else{
+  <ng-icon
+    name="ionChevronBack"
+    size="24"
+    class="text-gray-800 dark:text-white"
+  />
+  }
+</button>
+
+<div
+  [class]="
+    viewNavbar
+      ? 'relative min-h-dvh w-full lg:ps-64'
+      : 'relative min-h-dvh w-full'
+  "
+>
+  <div class="py-10 lg:py-14 min-h-[calc(100dvh-135px)]">
     <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
       <h1 class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
         JhairGPT
@@ -27,40 +60,42 @@
 
       <div
         [class]="
-          'absolute bottom-px inset-x-px p-2 pr-0 mr-2.5 rounded-b-md bg-gray-50 dark:bg-slate-900' +
+          'absolute bottom-px inset-x-px p-2 w-fit rounded-b-md bg-gray-50 dark:bg-slate-900 flex flex-row gap-x-1' +
           (isLoading ? ' opacity-0' : '')
         "
       >
-        <div class="flex justify-between items-center">
-          <div class="flex items-center gap-x-1">
-            <button
-              [disabled]="isLoading"
-              type="button"
-              title="Voice message"
-              class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 disabled:hover:text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            >
-              <ng-icon name="ionMicOutline" size="18" />
-            </button>
-            <button
-              [disabled]="isLoading"
-              type="button"
-              title="Attach file or image to chat"
-              class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 disabled:hover:text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            >
-              <ng-icon name="ionAttach" size="18" />
-            </button>
-          </div>
-
-          <button
-            (click)="chatting()"
-            [disabled]="isLoading"
-            type="button"
-            title="Send message"
-            class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-white bg-blue-600 hover:bg-blue-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-          >
-            <ng-icon name="ionArrowUp" size="18" />
-          </button>
-        </div>
+        <button
+          [disabled]="isLoading"
+          type="button"
+          title="Voice message"
+          class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 disabled:hover:text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+        >
+          <ng-icon name="ionMicOutline" size="18" />
+        </button>
+        <button
+          [disabled]="isLoading"
+          type="button"
+          title="Attach file or image to chat"
+          class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 disabled:hover:text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+        >
+          <ng-icon name="ionAttach" size="18" />
+        </button>
+      </div>
+      <div
+        [class]="
+          'absolute right-px bottom-px p-2 w-fit rounded-b-md bg-gray-50 dark:bg-slate-900 flex flex-row gap-x-1' +
+          (isLoading ? ' opacity-0' : '')
+        "
+      >
+        <button
+          (click)="chatting()"
+          [disabled]="isLoading"
+          type="button"
+          title="Send message"
+          class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-white bg-blue-600 hover:bg-blue-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+        >
+          <ng-icon name="ionArrowUp" size="18" />
+        </button>
       </div>
     </div>
   </footer>

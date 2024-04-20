@@ -1,21 +1,21 @@
 <li class="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4">
   @if (author === "humman") {
   <span
-    class="w-10 h-10 rounded-full bg-gradient-to-bl from-blue-600 to-violet-600 overflow-hidden"
+    class="w-10 h-10 min-w-10 min-h-10 rounded-full bg-gradient-to-bl from-blue-600 to-violet-600 overflow-hidden"
   >
     <ng-icon
       name="ionPerson"
-      class="flex-shrink-0 text-black dark:text-white mt-1"
+      class="flex-shrink-0 text-white mt-1"
       size="38"
     />
   </span>
   } @else if (author === "model") {
   <span
-    class="w-10 max-h-10 flex flex-col justify-center items-center rounded-full bg-gradient-to-bl from-violet-600 to-slate-800 overflow-hidden"
+    class="w-10 h-10 min-w-10 min-h-10 flex flex-col justify-center items-center rounded-full bg-gradient-to-bl from-violet-600 to-slate-800 overflow-hidden"
   >
     <ng-icon
       name="ionSparkles"
-      class="flex-shrink-0 text-black dark:text-white mt-0.5"
+      class="flex-shrink-0 text-white mt-0.5"
       size="30"
     />
   </span>

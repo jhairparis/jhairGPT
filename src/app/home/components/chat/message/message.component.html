@@ -5,9 +5,8 @@
   @for (item2 of item.ai; track $index) {
   <app-bubble [message]="item2.text" [author]="'model'" [timestamp]="time" />
   } } }@else {
-  <div class="w-full h-full bg-blue-300">
-    <h2 class="text-red-700">Empty!</h2>
-  </div>
+  <app-skeleton [author]="'humman'" />
+  <app-skeleton [author]="'model'" />
   }
   <!-- new Message -->
   @for (item of newMessages; track item) {

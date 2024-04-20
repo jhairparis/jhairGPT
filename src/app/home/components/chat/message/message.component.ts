@@ -9,11 +9,12 @@ import {
 import { BackendService } from '../../../../src/services/backend.service';
 import { BubbleComponent } from '../../bubble/bubble.component';
 import { ActivatedRoute } from '@angular/router';
+import { SkeletonComponent } from '../../bubble/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-message',
   standalone: true,
-  imports: [CommonModule, BubbleComponent],
+  imports: [CommonModule, BubbleComponent, SkeletonComponent],
   templateUrl: './message.component.html',
   styleUrl: './message.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -35,6 +35,12 @@ export class ChatComponent {
   newMessages: any[] = [];
   counter = 0;
 
+  viewNavbar = false;
+
+  toogleNavbar() {
+    this.viewNavbar = !this.viewNavbar;
+  }
+
   chatting() {
     const message = this.textInput.trim();
 

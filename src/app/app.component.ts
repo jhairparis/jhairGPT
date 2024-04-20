@@ -18,6 +18,8 @@ import {
   ionCopyOutline,
   ionReload,
   ionSparkles,
+  ionChevronBack,
+  ionChevronForward,
 } from '@ng-icons/ionicons';
 
 declare global {
@@ -47,6 +49,8 @@ declare global {
       ionCopyOutline,
       ionReload,
       ionSparkles,
+      ionChevronBack,
+      ionChevronForward,
     }),
   ],
   templateUrl: './app.component.html',
