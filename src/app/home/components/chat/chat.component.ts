@@ -34,6 +34,7 @@ export class ChatComponent {
   isLoading = false;
   newMessages: any[] = [];
   counter = 0;
+  showQuestions = 2;
 
   viewNavbar = false;
 
@@ -55,13 +56,14 @@ export class ChatComponent {
       .subscribe({
         next: ({ result }) => {
           const bubbles = {
-            user: this.textInput,
-            ai: result,
+            user: { text: this.textInput, questions: [] },
+            model: result,
           };
 
           this.newMessages = [...this.newMessages, bubbles];
           this.isLoading = false;
           this.textInput = '';
+          this.showQuestions += 2;
         },
         error: (err) => {
           console.error(err);

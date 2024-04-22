@@ -3,6 +3,11 @@ import { OnInit, Component, Input, inject } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { MarkdownPipe, MarkdownService } from 'ngx-markdown';
 
+type bubleChat = {
+  text: string;
+  questions: string[];
+};
+
 @Component({
   selector: 'app-bubble',
   standalone: true,
@@ -12,9 +17,10 @@ import { MarkdownPipe, MarkdownService } from 'ngx-markdown';
 })
 export class BubbleComponent implements OnInit {
   markdownService = inject(MarkdownService);
-  @Input() message = 'You can ask questions like';
+  @Input() message: bubleChat = { text: '', questions: [] };
   @Input() author!: 'model' | 'humman';
   @Input() timestamp = new Date();
+  @Input() showQuestion!: boolean;
 
   ngOnInit() {
     this.markdownService.renderer.table = (header, body) => {

@@ -36,21 +36,13 @@ export class WelcomeComponent {
 
     this.isAvailable = true;
 
-    this.backendService.createNewChat(this.textInput).subscribe({
-      next: ({ result }: any) => {
-        this.backendService.initialiazeChat(result.chatId).subscribe({
-          next: () => {
-            this.isAvailable = false;
-            this.router.navigate([`/chat/${result.chatId}`]);
-          },
-          error: (error) => {
-            this.isAvailable = false;
-            // TODO: make a toast
-            console.log('Error:', error);
-          },
-        });
+    this.backendService.initialiazeChat(this.textInput).subscribe({
+      next: (data) => {
+        const x: any = data;
+        this.isAvailable = false;
+        this.router.navigate([`/chat/${x.chatId}`]);
       },
-      error: (error: any) => {
+      error: (error) => {
         this.isAvailable = false;
         // TODO: make a toast
         console.log('Error:', error);

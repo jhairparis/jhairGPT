@@ -8,15 +8,9 @@ export class BackendService {
   private url = 'https://jhairparis.com/api';
   private http = inject(HttpClient);
 
-  createNewChat(text: string) {
-    return this.http.post(`${this.url}/gpt/new`, {
-      message: text,
-    });
-  }
-
-  initialiazeChat(chatId: string) {
+  initialiazeChat(message: string) {
     return this.http.post(`${this.url}/gpt`, {
-      chatId: chatId,
+      message: message,
       model: 'gemini-1.0-pro',
     });
   }

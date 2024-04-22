@@ -3,11 +3,7 @@
   <span
     class="w-10 h-10 min-w-10 min-h-10 rounded-full bg-gradient-to-bl from-blue-600 to-violet-600 overflow-hidden"
   >
-    <ng-icon
-      name="ionPerson"
-      class="flex-shrink-0 text-white mt-1"
-      size="38"
-    />
+    <ng-icon name="ionPerson" class="flex-shrink-0 text-white mt-1" size="38" />
   </span>
   } @else if (author === "model") {
   <span
@@ -25,45 +21,22 @@
     <div class="space-y-3 text-sm text-gray-800 dark:text-white">
       <div
         [innerHTML]="
-          message | markdown : { katex: true, clipboard: true } | async
+          message.text | markdown : { katex: true, clipboard: true } | async
         "
       ></div>
     </div>
 
-    <!--   <div class="sm:flex sm:justify-between">
-      <div
-        class="inline-flex border border-gray-200 rounded-full p-0.5 dark:border-gray-700"
+    @if (showQuestion) {
+    <div>
+      @for (item of message.questions; track $index) {
+      <button
+        type="button"
+        class="mb-2.5 me-1.5 py-2 px-3 inline-flex justify-center items-center gap-x-2 rounded-lg border border-blue-600 bg-white text-blue-600 align-middle hover:bg-blue-50 text-sm dark:bg-neutral-900 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400"
       >
-        <button
-          title="button"
-          type="button"
-          class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-800 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-blue-900 dark:hover:text-blue-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-        >
-          <ng-icon name="ionHeart" class="flex-shrink-0 h-4 w-4" size="18" />
-        </button>
-        <button
-          title="button"
-          type="button"
-          class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-800 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-blue-900 dark:hover:text-blue-200 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-        >
-          <ng-icon
-            name="ionHeartDislikeOutline"
-            class="flex-shrink-0 h-4 w-4"
-            size="18"
-          />
-        </button>
-      </div>
-
-      <div class="mt-1 sm:mt-0">
-        <button
-          title="button"
-          type="button"
-          class="py-2 px-3 inline-flex items-center gap-x-2 text-sm rounded-full border border-transparent text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-        >
-          <ng-icon name="ionReload" class="flex-shrink-0 h-4 w-4" size="18" />
-          New answer
-        </button>
-      </div>
-    </div> -->
+        {{ item }}
+      </button>
+      }
+    </div>
+    }
   </div>
 </li>

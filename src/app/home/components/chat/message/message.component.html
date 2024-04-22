@@ -1,19 +1,24 @@
 <ul class="mt-16 space-y-5 text-white">
-  @if (oldChat$ | async; as history) { @for (item of history.result.history;
-  track item) {
-  <app-bubble [message]="item.user" [author]="'humman'" [timestamp]="time" />
-  @for (item2 of item.ai; track $index) {
-  <app-bubble [message]="item2.text" [author]="'model'" [timestamp]="time" />
-  } } }@else {
+  @if (oldChat$ | async; as res) { @for (bubble of res.result.history; track
+  bubble; let last = $last) {
+  <app-bubble
+    [message]="bubble.txt"
+    [author]="bubble.role === 'user' ? 'humman' : 'model'"
+    [timestamp]="time"
+    [showQuestion]="last && newMessages.length === 0"
+  />
+  } }@else {
   <app-skeleton [author]="'humman'" />
   <app-skeleton [author]="'model'" />
   }
   <!-- new Message -->
-  @for (item of newMessages; track item) {
+  @for (item of newMessages; track item; let last = $last) {
   <app-bubble [message]="item.user" [author]="'humman'" [timestamp]="time" />
-  @for (item2 of item.ai; track $index) {
-  <app-bubble [message]="item2.text" [author]="'model'" [timestamp]="time" />
-  } }
+  <app-bubble
+    [message]="item.model"
+    [author]="'model'"
+    [timestamp]="time"
+    [showQuestion]="last"
+  />
+  }
 </ul>
-
-<!-- {{ dataHistory.result.history | json }} -->

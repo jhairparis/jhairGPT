@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit,
   inject,
 } from '@angular/core';
 import { BackendService } from '../../../../src/services/backend.service';
@@ -19,7 +18,7 @@ import { SkeletonComponent } from '../../bubble/skeleton/skeleton.component';
   styleUrl: './message.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessageComponent implements OnInit {
+export class MessageComponent {
   private backendService = inject(BackendService);
   private activatedRoute = inject(ActivatedRoute);
   private chatId = this.activatedRoute.snapshot.params['id'];
@@ -27,6 +26,5 @@ export class MessageComponent implements OnInit {
   time = new Date();
   oldChat$ = this.backendService.getChat(this.chatId);
   @Input() newMessages!: any[];
-
-  ngOnInit(): void {}
+  @Input() question!: number;
 }
