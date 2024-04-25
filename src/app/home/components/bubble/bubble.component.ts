@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { OnInit, Component, Input, inject } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
-import { MarkdownPipe, MarkdownService } from 'ngx-markdown';
+import { MarkdownPipe, MarkdownService, MermaidAPI } from 'ngx-markdown';
 
 type bubleChat = {
   text: string;
@@ -21,6 +21,9 @@ export class BubbleComponent implements OnInit {
   @Input() author!: 'model' | 'humman';
   @Input() timestamp = new Date();
   @Input() showQuestion!: boolean;
+  mermaidTheme = this.isDark()
+    ? MermaidAPI.Theme.Dark
+    : MermaidAPI.Theme.Default;
 
   ngOnInit() {
     this.markdownService.renderer.table = (header, body) => {
@@ -46,5 +49,12 @@ export class BubbleComponent implements OnInit {
 
       return '<td><div ' + alignClass + '>' + content + '</div></td>';
     };
+  }
+
+  isDark() {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return true;
+    }
+    return false;
   }
 }
