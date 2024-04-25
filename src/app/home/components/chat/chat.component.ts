@@ -52,7 +52,7 @@ export class ChatComponent {
     this.isLoading = true;
 
     this.backendService
-      .chatting(this.textInput, this.chatId, 'gemini-1.0-pro')
+      .chatting(this.textInput, this.chatId, 'gemini-1.5-pro-latest')
       .subscribe({
         next: ({ result }) => {
           const bubbles = {

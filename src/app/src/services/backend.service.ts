@@ -11,7 +11,7 @@ export class BackendService {
   initialiazeChat(message: string) {
     return this.http.post(`${this.url}/gpt`, {
       message: message,
-      model: 'gemini-1.0-pro',
+      model: 'gemini-1.5-pro-latest',
     });
   }
 
