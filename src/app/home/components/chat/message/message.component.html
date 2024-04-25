@@ -6,6 +6,7 @@
     [author]="bubble.role === 'user' ? 'humman' : 'model'"
     [timestamp]="time"
     [showQuestion]="last && newMessages.length === 0"
+    (questionClick)="receiveQuestion($event)"
   />
   } }@else {
   <app-skeleton [author]="'humman'" />
@@ -13,12 +14,18 @@
   }
   <!-- new Message -->
   @for (item of newMessages; track item; let last = $last) {
-  <app-bubble [message]="item.user" [author]="'humman'" [timestamp]="time" />
+  <app-bubble
+    [message]="item.user"
+    [author]="'humman'"
+    [timestamp]="time"
+    (questionClick)="receiveQuestion($event)"
+  />
   <app-bubble
     [message]="item.model"
     [author]="'model'"
     [timestamp]="time"
     [showQuestion]="last"
+    (questionClick)="receiveQuestion($event)"
   />
   }
 </ul>

@@ -72,6 +72,10 @@ export class ChatComponent {
       });
   }
 
+  setText(question: string) {
+    this.textInput = question;
+  }
+
   isTouchScren() {
     if (window.matchMedia('(pointer: coarse)').matches) {
       return true;

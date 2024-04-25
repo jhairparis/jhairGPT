@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { OnInit, Component, Input, inject } from '@angular/core';
+import {
+  OnInit,
+  Component,
+  Input,
+  inject,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { MarkdownPipe, MarkdownService, MermaidAPI } from 'ngx-markdown';
 
@@ -21,6 +28,9 @@ export class BubbleComponent implements OnInit {
   @Input() author!: 'model' | 'humman';
   @Input() timestamp = new Date();
   @Input() showQuestion!: boolean;
+
+  @Output() questionClick = new EventEmitter<string>();
+
   mermaidTheme = this.isDark()
     ? MermaidAPI.Theme.Dark
     : MermaidAPI.Theme.Default;
@@ -49,6 +59,10 @@ export class BubbleComponent implements OnInit {
 
       return '<td><div ' + alignClass + '>' + content + '</div></td>';
     };
+  }
+
+  onQuestionClick(index: number) {
+    this.questionClick.emit(this.message.questions[index]);
   }
 
   isDark() {

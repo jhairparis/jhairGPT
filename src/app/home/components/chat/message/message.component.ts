@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
+  Output,
   inject,
 } from '@angular/core';
 import { BackendService } from '../../../../src/services/backend.service';
@@ -27,4 +29,9 @@ export class MessageComponent {
   oldChat$ = this.backendService.getChat(this.chatId);
   @Input() newMessages!: any[];
   @Input() question!: number;
+  @Output() setText = new EventEmitter<string>();
+
+  receiveQuestion(v: string) {
+    this.setText.emit(v);
+  }
 }
