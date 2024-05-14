@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
+const defaultHard ="gemini-1.5-flash-latest"
+
 @Injectable({
   providedIn: 'root',
 })
@@ -11,7 +13,7 @@ export class BackendService {
   initialiazeChat(message: string) {
     return this.http.post(`${this.url}/gpt`, {
       message: message,
-      model: 'gemini-1.5-pro-latest',
+      model: defaultHard,
     });
   }
 
@@ -23,7 +25,7 @@ export class BackendService {
     return this.http.put<any>(`${this.url}/gpt`, {
       message,
       chatId: chatId,
-      model,
+      model:defaultHard,
     });
   }
 }
