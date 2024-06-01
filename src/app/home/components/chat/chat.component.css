@@ -1,16 +1,51 @@
-#textarea-prompt::-webkit-scrollbar {
+.textarea-transiton::-webkit-scrollbar {
   width: 0.7vw;
 }
 
-#textarea-prompt::-webkit-scrollbar-track {
+.textarea-transiton::-webkit-scrollbar-track {
   background-color: transparent;
 }
 
-#textarea-prompt::-webkit-scrollbar-thumb {
+.textarea-transiton::-webkit-scrollbar-thumb {
   background-color: #6e78ff;
   border-radius: 3px;
 }
 
-#textarea-prompt::-webkit-scrollbar-thumb:hover {
+.textarea-transiton::-webkit-scrollbar-thumb:hover {
   background-color: #6d75e8;
+}
+
+.textarea-transiton {
+  transition-property: border-radius, color, background-color, border-color,
+    text-decoration-color, opacity, box-shadow, transform, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.85, 0.07, 0.53, 1.01),
+    cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 290ms, 500ms;
+}
+
+.animation {
+  border-right: 2px solid rgba(255, 255, 255, 0.75);
+  animation: typewriter 5s steps(44) 1s 1 normal both,
+    blinkTextCursor 600ms steps(44) infinite normal;
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  60% {
+    padding-right: 0px;
+  }
+  to {
+    width: 24em;
+    padding-right: 5px;
+  }
+}
+@keyframes blinkTextCursor {
+  from {
+    border-right-color: rgba(255, 255, 255, 0.75);
+  }
+  to {
+    border-right-color: transparent;
+  }
 }

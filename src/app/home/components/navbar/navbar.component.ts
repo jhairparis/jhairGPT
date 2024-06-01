@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 
 @Component({
@@ -6,8 +6,14 @@ import { NgIcon } from '@ng-icons/core';
   standalone: true,
   imports: [NgIcon],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
+  @Input() hidden: boolean = false;
+  @Output() toggle = new EventEmitter<()=>void>();
 
+  toggleSidebar() {
+    console.log('Toggling sidebar');
+    this.toggle.emit();
+  }
 }

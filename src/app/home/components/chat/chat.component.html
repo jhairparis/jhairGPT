@@ -1,102 +1,222 @@
-@if (viewNavbar) {
-<app-navbar />
-}
-
-<button
-  type="button"
-  title="Toogle navbar"
-  [class]="
-    'hidden lg:block ' +
-    (viewNavbar ? 'sticky z-20 left-64 top-1/2' : 'sticky z-20 left-0 top-1/2')
-  "
-  (click)="toogleNavbar()"
->
-  @if (viewNavbar) {
-  <ng-icon
-    name="ionChevronForward"
-    size="24"
-    class="text-gray-800 dark:text-white"
-  />
-  }@else{
-  <ng-icon
-    name="ionChevronBack"
-    size="24"
-    class="text-gray-800 dark:text-white"
-  />
-  }
-</button>
+<app-navbar [hidden]="viewSidebar" (toggle)="toogleNavbar()" />
 
 <div
   [class]="
-    viewNavbar
-      ? 'relative min-h-dvh w-full lg:ps-64'
-      : 'relative min-h-dvh w-full'
+    'transition-all relative flex flex-col h-dvh ' +
+    (viewSidebar ? 'ml-64' : 'ml-0')
   "
 >
-  <div class="py-10 lg:py-14 min-h-[calc(100dvh-135px)]">
-    <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
-      <h1 class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
-        JhairGPT
-      </h1>
+  <header
+    class="sticky top-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full h-12 px-2 py-1 bg-gray-50 dark:bg-slate-900"
+  >
+    <button
+      type="button"
+      [class]="
+        !viewSidebar
+          ? 'inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700'
+          : 'hidden'
+      "
+      title="Open sidebar"
+      (click)="toogleNavbar()"
+    >
+      <span class="sr-only">Open sidebar</span>
+      <ng-icon name="ionMenu" size="24" class="w-6 h-6" aria-hidden="true" />
+    </button>
+    <nav
+      class="relative w-full pl-2 sm:pl-3 lg:pl-4 pr-4 sm:pr-6 lg:pr-8 sm:flex sm:items-center sm:justify-between"
+    >
+      <div class="hidden basis-full grow sm:block">
+        <ul class="flex flex-col sm:flex-row sm:items-center py-2 md:py-0">
+          <li [class]="!viewSidebar ? '' : 'hidden'">
+            <a
+              href="#"
+              role="button"
+              title="New chat"
+              class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700"
+            >
+              <span class="sr-only">New chat</span>
+              <ng-icon
+                name="ionCreateOutline"
+                size="24"
+                class="w-6 h-6"
+                aria-hidden="true"
+              />
+            </a>
+          </li>
+
+          <li>
+            <select
+              title="Select Model"
+              data-hs-select='{
+          "placeholder": "Select Model...",
+          "toggleTag": "<button type=\"button\"><span class=\"me-2\" data-icon></span><span class=\"text-gray-800 dark:text-neutral-200\" data-title></span></button>",
+          "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 px-4 pe-9 min-w-[220px] flex items-center text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:border-blue-500 focus:ring-blue-500 before:absolute before:inset-0 before:z-[1] dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400",
+          "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 dark:bg-neutral-900 dark:border-neutral-700",
+          "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:text-neutral-200 dark:focus:bg-neutral-800",
+          "optionTemplate": "<div><div class=\"flex items-center\"><div class=\"me-2\" data-icon></div><div class=\"font-semibold text-gray-800 dark:text-neutral-200\" data-title></div></div><div class=\"mt-1.5 text-sm text-gray-500 dark:text-neutral-500\" data-description></div></div>",
+          "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"flex-shrink-0 size-3.5 text-gray-500 dark:text-neutral-500\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+        }'
+              class="hidden"
+              value="1"
+            >
+              <option value="">Choose</option>
+              <option
+                value="selected"
+                data-hs-select-option='{
+            "description": "Model optimized for general purpose tasks.",
+            "icon": "<img class=\"inline-block size-6 rounded-full\" src=\"https://static.jhairparis.com/avatar.png\" alt=\"James Collins\" />"
+          }'
+              >
+                Automatico
+              </option>
+              <option
+                value="2"
+                data-hs-select-option='{
+            "description": "Best model but expensive to use.",
+            "icon": "<picture class=\"inline-block size-6 rounded-full\"><source srcset=\"https://static.jhairparis.com/portfolio/projects/JhairGPT/source/openai-white.svg\" media=\"(prefers-color-scheme: dark)\"> <img src=\"https://static.jhairparis.com/portfolio/projects/JhairGPT/source/openai.svg\"> </picture>"
+          }'
+              >
+                GPT-4
+              </option>
+              <option
+                value="3"
+                data-hs-select-option='{
+            "description": "Model simple and fast to use.",
+            "icon": "<img class=\"inline-block size-6\" src=\"https://static.jhairparis.com/portfolio/projects/JhairGPT/source/mistral-ai.svg\" alt=\"James Collins\" />"
+          }'
+              >
+                GPT-3.5
+              </option>
+              <option
+                value="4"
+                data-hs-select-option='{
+            "description": "Model good for image and text tasks.",
+            "icon": "<img class=\"inline-block size-6 rounded-full\" src=\"https://static.jhairparis.com/portfolio/projects/JhairGPT/source/google.svg\" alt=\"James Collins\" />"
+          }'
+              >
+                Gemine
+              </option>
+            </select>
+          </li>
+
+          <li class="flex items-center gap-x-2 py-2 sm:py-0 sm:ms-auto">
+            <a
+              class="flex items-center gap-x-2 font-medium text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500"
+              href="#"
+            >
+              <svg
+                class="flex-shrink-0 size-4"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Log in
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main [class]="'overflow-hidden ' + (existId ? 'flex-1' : '')">
+    <div class="p-8 pb-0 h-full overflow-y-auto">
+      <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
+        @if (existId) {
+        <h1
+          class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white"
+        >
+          JhairGPT
+        </h1>
+        }@else {
+        <div
+          class="flex flex-col justify-center items-center mt-20 max-w-4xl w-full text-center mx-auto px-4 sm:px-6 lg:px-8"
+        >
+          <h1
+            class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white m-0 max-w-fit overflow-hidden whitespace-nowrap animation"
+          >
+            Welcome to JhairGPT
+          </h1>
+          <p class="mt-3 text-gray-600 dark:text-gray-400">
+            Your copilot for all
+          </p>
+        </div>
+        }
+      </div>
+
+      <div class="py-10 lg:py-14">
+        @if (existId) {
+        <app-message
+          [newMessages]="newMessages"
+          [question]="showQuestions"
+          (setText)="setText($event)"
+        />
+        }
+      </div>
     </div>
+  </main>
 
-    <app-message
-      [newMessages]="newMessages"
-      [question]="showQuestions"
-      (setText)="setText($event)"
-    />
-  </div>
-
-  <footer class="max-w-4xl mx-auto sticky bottom-0 z-10 p-3 sm:py-6">
-    <div class="relative backdrop-blur-sm">
+  <footer class="w-full max-w-4xl mx-auto p-3 sm:py-6">
+    <div class="relative">
       <textarea
-        id="textarea-prompt"
+        autofocus
         autosize
         [minRows]="1"
         [maxRows]="10"
         [(ngModel)]="textInput"
+        [disabled]="isAvailable"
         (keydown.enter)="onSubmit($event)"
         (keydown.shift.enter)="newLine()"
-        [disabled]="isLoading"
-        class="block w-full p-4 pb-12 scroll-pb-12 overflow-hidden resize-none text-sm rounded-lg border text-gray-900 bg-gray-50 border-gray-300 transition duration-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-90 disabled:pointer-events-none dark:text-white dark:bg-slate-900 dark:border-gray-700 dark:placeholder-gray-400"
+        (resized)="onResized($event)"
+        type="text"
+        [class]="
+          'block w-full p-4 pr-24 text-sm border resize-none text-gray-900 bg-gray-50 border-gray-300 outline-none textarea-transiton focus:ring-2 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-90 disabled:pointer-events-none dark:text-white dark:bg-slate-900 dark:border-gray-700 dark:placeholder-gray-400 ' +
+          (avalabelSend() && !isTouchScren() ? 'pr-[148px]' : '')
+        "
+        [style]="
+          removeRounder ? 'border-radius: 0.5rem' : 'border-radius: 5rem'
+        "
         placeholder="Ask me anything..."
       ></textarea>
-
-      <div
-        [class]="
-          'absolute bottom-px inset-x-px p-2 w-fit rounded-b-md bg-gray-50 dark:bg-slate-900 flex flex-row gap-x-1' +
-          (isLoading ? ' opacity-0' : '')
-        "
-      >
+      <div class="absolute top-1/2 end-2 -translate-y-1/2 flex gap-x-2">
         <button
-          [disabled]="isLoading"
           type="button"
-          title="Voice message"
-          class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 disabled:hover:text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+          title="upload file or file to chat"
+          disabled
+          class="w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+        >
+          <ng-icon name="ionCloudUploadOutline" size="18" />
+        </button>
+        <button
+          type="button"
+          title="Voice search"
+          disabled
+          [class]="
+            avalabelSend() && isTouchScren()
+              ? 'hidden'
+              : 'w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600'
+          "
         >
           <ng-icon name="ionMicOutline" size="18" />
         </button>
         <button
-          [disabled]="isLoading"
-          type="button"
-          title="Attach file or image to chat"
-          class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-gray-500 disabled:hover:text-gray-500 hover:text-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:text-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-        >
-          <ng-icon name="ionAttach" size="18" />
-        </button>
-      </div>
-      <div
-        [class]="
-          'absolute right-px bottom-px p-2 w-fit rounded-b-md bg-gray-50 dark:bg-slate-900 flex flex-row gap-x-1' +
-          (isLoading ? ' opacity-0' : '')
-        "
-      >
-        <button
-          (click)="chatting()"
-          [disabled]="isLoading"
           type="button"
           title="Send message"
-          class="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-lg text-white bg-blue-600 hover:bg-blue-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+          [disabled]="isAvailable"
+          [class]="
+            avalabelSend()
+              ? 'w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600'
+              : 'hidden'
+          "
+          (click)="onSubmit($event)"
         >
           <ng-icon name="ionArrowUp" size="18" />
         </button>

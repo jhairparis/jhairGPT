@@ -1,84 +1,97 @@
-<div
-  id="application-sidebar"
-  class="hs-overlay hs-overlay-open:translate-x-0 -translate-x-full duration-300 transform hidden fixed top-0 start-0 bottom-0 z-[60] w-64 bg-white border-e border-gray-200 overflow-y-auto lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500 dark:bg-slate-900 dark:border-gray-700"
+<aside
+  [class]="
+    'fixed flex flex-col justify-between top-0 left-0 z-40 w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-800 ' +
+    (hidden ? ' translate-x-0' : '-translate-x-full')
+  "
+  aria-label="Sidebar"
 >
-  <nav
-    class="hs-accordion-group w-full h-full flex flex-col"
-    data-hs-accordion-always-open
+  <div
+    class="flex flex-wrap sm:justify-between sm:flex-nowrap z-50 w-full h-12 px-2 py-1"
   >
-    <div class="h-full">
-      <!-- List -->
-      <ul class="space-y-1.5 p-4">
-        <li>
-          <a
-            class="flex items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            href="#"
-          >
-            <ng-icon name="ionAdd" class="flex-shrink-0" size="18" />
-            New chat
-          </a>
-        </li>
-        <li>
-          <a
-            class="flex items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            href="#"
-          >
-            <ng-icon
-              name="ionDownloadOutline"
-              class="flex-shrink-0"
-              size="18"
-            />
-            Save conversation
-          </a>
-        </li>
-        <li>
-          <a
-            class="flex items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            href="#"
-          >
-            <ng-icon name="ionInformation" class="flex-shrink-0" size="18" />
-            Updates & FAQ
-          </a>
-        </li>
-        <li>
-          <a
-            class="flex items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            href="#"
-          >
-            <ng-icon
-              name="ionFlameOutline"
-              class="flex-shrink-0 text-blue-600"
-              size="18"
-            />
-            <span
-              class="bg-clip-text bg-gradient-to-tl from-blue-600 to-violet-600 text-transparent"
-              >Upgrade Plan</span
-            >
-          </a>
-        </li>
-      </ul>
-      <!-- End List -->
-    </div>
+    <button
+      type="button"
+      class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700"
+      (click)="toggleSidebar()"
+      title="Close sidebar"
+    >
+      <span class="sr-only">Close sidebar</span>
 
-    <!-- Footer -->
-    <div class="mt-auto">
-      <div class="py-2.5 px-7">
-        <p class="inline-flex items-center gap-x-2 text-xs text-green-600">
-          <span class="block w-1.5 h-1.5 rounded-full bg-green-600"></span>
-          Credits 20 available
-        </p>
-      </div>
+      <ng-icon name="ionClose" size="24" class="w-6 h-6" aria-hidden="true" />
+    </button>
 
-      <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+    <a
+      href="#"
+      role="button"
+      title="New chat"
+      class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700"
+    >
+      <span class="sr-only">New chat</span>
+      <ng-icon
+        name="ionCreateOutline"
+        size="24"
+        class="w-6 h-6"
+        aria-hidden="true"
+      />
+    </a>
+  </div>
+
+  <nav class="flex-1 px-3 pb-4 overflow-y-auto flex flex-col justify-between">
+    <ul class="space-y-2 font-medium">
+      <li>
         <a
-          class="flex justify-between items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-          href="https://jhairparis.com/auth/signin/"
+          href="#"
+          class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
         >
-          Sign in
-          <ng-icon name="ionLogIn" class="flex-shrink-0" size="24" />
+          <ng-icon
+            name="ionInformation"
+            class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+            size="18"
+          />
+          <span class="ms-3">Dashboard</span>
         </a>
-      </div>
-    </div>
-    <!-- End Footer -->
+      </li>
+      @for (item of
+      ["x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y","x","y",];
+      track $index) {
+      <li>
+        <a
+          href="#"
+          class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+        >
+          <ng-icon
+            name="ionInformation"
+            class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+            size="18"
+          />
+          <span class="ms-3">{{ item }}</span>
+        </a>
+      </li>
+      }
+    </ul>
   </nav>
-</div>
+  <div class="mt-auto">
+    <div class="py-2.5 px-7">
+      <p class="inline-flex items-center gap-x-2 text-xs text-green-600">
+        <span class="block w-1.5 h-1.5 rounded-full bg-green-600"></span>
+        Credits 20 available
+      </p>
+    </div>
+
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+      <a
+        class="flex justify-between items-center gap-x-3 py-2 px-3 text-sm text-slate-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+        href="#"
+      >
+        <span
+          class="bg-clip-text bg-gradient-to-tl from-blue-600 to-violet-600 text-transparent"
+          >Upgrade Plan</span
+        >
+        <ng-icon
+          name="ionFlameOutline"
+          class="flex-shrink-0 text-blue-600"
+          size="18"
+        />
+      </a>
+    </div>
+  </div>
+</aside>

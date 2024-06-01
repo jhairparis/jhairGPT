@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MessageComponent } from './message/message.component';
 import { AutosizeModule } from 'ngx-autosize';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -27,19 +28,23 @@ import { FormsModule } from '@angular/forms';
 export class ChatComponent {
   private activatedRoute = inject(ActivatedRoute);
   private backendService = inject(BackendService);
+  private router = inject(Router);
+
   private chatId = this.activatedRoute.snapshot.params['id'];
 
-  time = new Date();
-  textInput = '';
-  isLoading = false;
+  existId = this.chatId ? true : false;
+
   newMessages: any[] = [];
-  counter = 0;
   showQuestions = 2;
 
-  viewNavbar = false;
+  textInput = '';
+  isAvailable = false;
+  removeRounder = false;
+  viewSidebar = false;
 
   toogleNavbar() {
-    this.viewNavbar = !this.viewNavbar;
+    console.log('hey Nav');
+    this.viewSidebar = !this.viewSidebar;
   }
 
   chatting() {
@@ -49,11 +54,11 @@ export class ChatComponent {
       console.log('Input field is empty');
       return;
     }
-    this.isLoading = true;
 
-    this.backendService
-      .chatting(this.textInput, this.chatId, "")
-      .subscribe({
+    this.isAvailable = true;
+
+    if (this.existId) {
+      this.backendService.chatting(this.textInput, this.chatId, '').subscribe({
         next: ({ result }) => {
           const bubbles = {
             user: { text: this.textInput, questions: [] },
@@ -61,15 +66,30 @@ export class ChatComponent {
           };
 
           this.newMessages = [...this.newMessages, bubbles];
-          this.isLoading = false;
+          this.isAvailable= false;
           this.textInput = '';
           this.showQuestions += 2;
         },
         error: (err) => {
           console.error(err);
-          this.isLoading = false;
+          this.isAvailable = false;
         },
       });
+      return;
+    }
+
+    this.backendService.initialiazeChat(this.textInput).subscribe({
+      next: (data) => {
+        const x: any = data;
+        this.isAvailable = false;
+        this.router.navigate([`/chat/${x.chatId}`]);
+      },
+      error: (error) => {
+        this.isAvailable = false;
+        // TODO: make a toast
+        console.log('Error:', error);
+      },
+    });
   }
 
   setText(question: string) {
@@ -93,4 +113,14 @@ export class ChatComponent {
       this.chatting();
     }
   }
+
+  avalabelSend() {
+    return this.textInput.length >= 5;
+  }
+
+  onResized(e: any) {
+    if (e >= 70) this.removeRounder = true;
+    else this.removeRounder = false;
+  }
+
 }
