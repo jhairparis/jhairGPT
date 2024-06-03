@@ -31,9 +31,7 @@ export class BackendService {
         model: model,
       },
       {
-        headers: {
-          Cookie:  `__Secure-next-auth.session-token=${getCookie("me")}`,
-        },
+        withCredentials: true,
       }
     );
   }
