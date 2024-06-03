@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ChatComponent } from './components/chat/chat.component';
+import { AuthComponent } from './components/auth/auth.component';
 
 const routes: Routes = [
   {
@@ -10,6 +11,10 @@ const routes: Routes = [
   {
     path: 'chat/:id',
     component: ChatComponent,
+  },
+  {
+    path: 'auth/:token',
+    component: AuthComponent,
   },
   { path: '**', redirectTo: '' },
 ];
