@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ChatComponent } from './components/chat/chat.component';
+import { PageNotFoundComponent } from '../page-not-found/page-not-found.component';
 
 const routes: Routes = [
   {
@@ -11,7 +12,12 @@ const routes: Routes = [
     path: 'chat/:id',
     component: ChatComponent,
   },
-  { path: '**', redirectTo: '' },
+  {
+    path: 'chat',
+    redirectTo: '',
+  },
+  // { path: '**', redirectTo: '' },
+  { path: '**', pathMatch: 'full', component: PageNotFoundComponent },
 ];
 
 @NgModule({
