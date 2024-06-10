@@ -16,7 +16,6 @@ const routes: Routes = [
     path: 'chat',
     redirectTo: '',
   },
-  // { path: '**', redirectTo: '' },
   { path: '**', pathMatch: 'full', component: PageNotFoundComponent },
 ];
 
