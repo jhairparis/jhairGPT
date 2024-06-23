@@ -2,15 +2,15 @@ import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BubbleComponent } from '../bubble/bubble.component';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
 import { NgIcon } from '@ng-icons/core';
-import { BackendService } from '../../../src/services/backend.service';
+import { ChatService } from '../../services/chats/chats.service';
 import { CommonModule } from '@angular/common';
 import { MessageComponent } from '../message/message.component';
-import { AutosizeModule } from 'ngx-autosize';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { TextareaAutoresizeDirective } from '../../directives/textarea-autoresize/textarea-autoresize.directive';
 
 const Model: Record<string, string> = {
   '1': 'auto',
@@ -29,15 +29,15 @@ const Model: Record<string, string> = {
     NgIcon,
     FormsModule,
     MessageComponent,
-    AutosizeModule,
     RouterModule,
+    TextareaAutoresizeDirective
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css',
 })
 export class ChatComponent {
   private activatedRoute = inject(ActivatedRoute);
-  private backendService = inject(BackendService);
+  private backendService = inject(ChatService);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
   private chatId = this.activatedRoute.snapshot.params['id'];
@@ -47,7 +47,7 @@ export class ChatComponent {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      this.origin = window.location.origin.replace(/\//g,"%2F").replace(/:/g,'%3A');
+      this.origin = window.location.origin.replace(/\//g, "%2F").replace(/:/g, '%3A');
     }
   }
 
@@ -137,7 +137,7 @@ export class ChatComponent {
     if (!this.isTouchScren()) this.textInput += '';
   }
 
-  onResized(e: any) {
+  onResized(e: number) {
     if (e >= 70) this.removeRounder = true;
     else this.removeRounder = false;
   }

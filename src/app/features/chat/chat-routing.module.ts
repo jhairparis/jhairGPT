@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ChatComponent } from './components/chat/chat.component';
-import { PageNotFoundComponent } from '../page-not-found/page-not-found.component';
+import { ChatComponent } from './components/chat-window/chat.component';
 
 const routes: Routes = [
   {
@@ -16,11 +15,10 @@ const routes: Routes = [
     path: 'chat',
     redirectTo: '',
   },
-  { path: '**', pathMatch: 'full', component: PageNotFoundComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class HomeRoutingModule {}
+export class ChatRoutingModule { }

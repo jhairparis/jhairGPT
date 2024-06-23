@@ -6,7 +6,9 @@ import {
   inject,
   Output,
   EventEmitter,
+  PLATFORM_ID
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { NgIcon } from '@ng-icons/core';
 import { MarkdownPipe, MarkdownService, MermaidAPI } from 'ngx-markdown';
 
@@ -24,6 +26,7 @@ type bubleChat = {
 })
 export class BubbleComponent implements OnInit {
   markdownService = inject(MarkdownService);
+  private platformId = inject(PLATFORM_ID);
   @Input() message: bubleChat = { text: '', questions: [] };
   @Input() author!: 'model' | 'humman';
   @Input() timestamp = new Date();
@@ -66,7 +69,7 @@ export class BubbleComponent implements OnInit {
   }
 
   isDark() {
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (isPlatformBrowser(this.platformId) && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return true;
     }
     return false;

@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { PageNotFoundComponent } from './shared//components/page-not-found/page-not-found.component';
 
 export const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
+    loadChildren: () => import('./features/chat/chat.module').then((m) => m.HomeModule),
   },
   { path: '**', component: PageNotFoundComponent },
 ];

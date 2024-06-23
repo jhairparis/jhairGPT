@@ -1,22 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
-function getCookie(name:string) {
-    let cookieArr = document.cookie.split(";");
-    for (let i = 0; i < cookieArr.length; i++) {
-        let cookiePair = cookieArr[i].split("=");
-        if (name == cookiePair[0].trim()) {
-            return decodeURIComponent(cookiePair[1]);
-        }
-    }
-    return null;
-}
-
 @Injectable({
   providedIn: 'root',
 })
-export class BackendService {
-  private url = 'https://jhairparis.com/api';
+export class ChatService {
+  //private url = 'https://jhairparis.com/api';
+  private url = 'http://localhost:3000/api';
   private http = inject(HttpClient);
 
   getChat(chatId: string) {

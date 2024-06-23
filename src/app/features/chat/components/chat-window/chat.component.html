@@ -1,52 +1,32 @@
 <app-navbar [hidden]="viewSidebar" (toggle)="toogleNavbar()" />
 
-<div
-  [class]="
+<div [class]="
     'transition-all relative flex flex-col h-dvh ' +
     (viewSidebar ? 'ml-64' : 'ml-0')
-  "
->
+  ">
   <header
-    class="sticky top-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full h-12 px-2 py-1 bg-gray-50 dark:bg-slate-900"
-  >
-    <button
-      type="button"
-      [class]="
+    class="sticky top-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full h-12 px-2 py-1 bg-gray-50 dark:bg-slate-900">
+    <button type="button" [class]="
         !viewSidebar
           ? 'inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700'
           : 'hidden'
-      "
-      title="Open sidebar"
-      (click)="toogleNavbar()"
-    >
+      " title="Open sidebar" (click)="toogleNavbar()">
       <span class="sr-only">Open sidebar</span>
       <ng-icon name="ionMenu" size="24" class="w-6 h-6" aria-hidden="true" />
     </button>
-    <nav
-      class="relative w-full pl-2 sm:pl-3 lg:pl-4 pr-4 sm:pr-6 lg:pr-8 sm:flex sm:items-center sm:justify-between"
-    >
+    <nav class="relative w-full pl-2 sm:pl-3 lg:pl-4 pr-4 sm:pr-6 lg:pr-8 sm:flex sm:items-center sm:justify-between">
       <div class="hidden basis-full grow sm:block">
         <ul class="flex flex-col sm:flex-row sm:items-center py-2 md:py-0">
           <li [class]="!viewSidebar ? '' : 'hidden'">
-            <a
-              [routerLink]="['/']"
-              role="button"
-              title="New chat"
-              class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700"
-            >
+            <a [routerLink]="['/']" role="button" title="New chat"
+              class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700">
               <span class="sr-only">New chat</span>
-              <ng-icon
-                name="ionCreateOutline"
-                size="24"
-                class="w-6 h-6"
-                aria-hidden="true"
-              />
+              <ng-icon name="ionCreateOutline" size="24" class="w-6 h-6" aria-hidden="true" />
             </a>
           </li>
 
           <li>
-            <select
-              data-hs-select='{
+            <select data-hs-select='{
                 "placeholder": "Select Model...",
                 "toggleTag": "<button type=\"button\"><span class=\"me-2 size-6\" data-icon></span><span class=\"text-gray-800 dark:text-neutral-200\" data-title></span></button>",
                 "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 px-4 pe-9 flex text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:border-blue-500 focus:ring-blue-500 before:absolute before:inset-0 before:z-[1] dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400",
@@ -54,67 +34,39 @@
                 "optionClasses": "py-2 px-3 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:text-neutral-200 dark:focus:bg-neutral-800",
                 "optionTemplate": "<div class=\"flex items-center\"><div class=\"me-2 size-6\" data-icon></div><div><div class=\"hs-selected:font-semibold text-sm text-gray-800 dark:text-neutral-200\" data-title></div></div><div class=\"ms-auto\"><span class=\"hidden hs-selected:block\"><svg class=\"flex-shrink-0 size-4 text-blue-600\" xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 16 16\"><path d=\"M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z\"/></svg></span></div></div>",
                 "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"flex-shrink-0 size-3.5 text-gray-500 dark:text-neutral-500\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
-              }'
-              class="hidden"
-              [(ngModel)]="modelSelected"
-            >
-              <option
-                value="1"
-                selected=""
-                data-hs-select-option='{
+              }' class="hidden" [(ngModel)]="modelSelected">
+              <option value="1" selected="" data-hs-select-option='{
                   "icon": "<img class=\"inline-block size-6 rounded-full\" src=\"https://static.jhairparis.com/avatar.png\" alt=\"A\" />"
-                }'
-              >
+                }'>
                 Auto
               </option>
-              <option
-                value="2"
-                data-hs-select-option='{
+              <option value="2" data-hs-select-option='{
                   "icon": "<picture class=\"inline-block size-6\"><source srcset=\"https://static.jhairparis.com/portfolio/projects/JhairGPT/source/openai-white.svg\" media=\"(prefers-color-scheme: dark)\"> <img src=\"https://static.jhairparis.com/portfolio/projects/JhairGPT/source/openai.svg\" alt=\"O\"></picture>"
-                }'
-              >
+                }'>
                 GPT-4
               </option>
-              <option
-                value="3"
-                data-hs-select-option='{
+              <option value="3" data-hs-select-option='{
                   "icon": "<img class=\"inline-block size-6\" src=\"https://static.jhairparis.com/portfolio/projects/JhairGPT/source/mistral-ai.svg\" alt=\"M\" />"
-                }'
-              >
+                }'>
                 GPT-3.5
               </option>
-              <option
-                value="4"
-                data-hs-select-option='{
+              <option value="4" data-hs-select-option='{
                   "icon": "<img class=\"inline-block size-6\" src=\"https://static.jhairparis.com/portfolio/projects/JhairGPT/source/google.svg\" alt=\"G\" />"
-                }'
-              >
+                }'>
                 Gemine
               </option>
             </select>
           </li>
 
           <li class="flex items-center gap-x-2 py-2 sm:py-0 sm:ms-auto">
-            <a
-              class="flex items-center gap-x-2 font-medium text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500"
+            <a class="flex items-center gap-x-2 font-medium text-gray-500 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-500"
               [href]="
                 'https://jhairparis.com/auth/signin?callbackUrl=' +
-                origin +
-                '%2Fauth%2F%3C%3Ctoken%3E%3E'
-              "
-            >
-              <svg
-                class="flex-shrink-0 size-4"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
+                origin
+              ">
+              <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
@@ -130,18 +82,14 @@
     <div class="p-8 pb-0 h-full overflow-y-auto">
       <div class="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto text-center">
         @if (existId) {
-        <h1
-          class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white"
-        >
+        <h1 class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
           JhairGPT
         </h1>
         }@else {
         <div
-          class="flex flex-col justify-center items-center mt-20 max-w-4xl w-full text-center mx-auto px-4 sm:px-6 lg:px-8"
-        >
+          class="flex flex-col justify-center items-center mt-20 max-w-4xl w-full text-center mx-auto px-4 sm:px-6 lg:px-8">
           <h1
-            class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white m-0 max-w-fit overflow-hidden whitespace-nowrap animation"
-          >
+            class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white m-0 max-w-fit overflow-hidden whitespace-nowrap animation">
             Welcome to JhairGPT
           </h1>
           <p class="mt-3 text-gray-600 dark:text-gray-400">
@@ -153,11 +101,7 @@
 
       <div class="py-10 lg:py-14">
         @if (existId) {
-        <app-message
-          [newMessages]="newMessages"
-          [question]="showQuestions"
-          (setText)="setText($event)"
-        />
+        <app-message [newMessages]="newMessages" [question]="showQuestions" (setText)="setText($event)" />
         }
       </div>
     </div>
@@ -165,58 +109,33 @@
 
   <footer class="w-full max-w-4xl mx-auto p-3 sm:py-6">
     <div class="relative">
-      <textarea
-        autofocus
-        autosize
-        [minRows]="1"
-        [maxRows]="10"
-        [(ngModel)]="textInput"
-        [disabled]="isAvailable"
-        (keydown.enter)="onSubmit($event)"
-        (keydown.shift.enter)="newLine()"
-        (resized)="onResized($event)"
-        type="text"
+      <textarea autofocus rows="1" [disabled]="isAvailable" [(ngModel)]="textInput" (keydown.enter)="onSubmit($event)"
+        (keydown.shift.enter)="newLine()" (resized)="onResized($event)" type="text" placeholder="Ask me anything..."
         [class]="
           'block w-full p-4 pr-24 text-sm border resize-none text-gray-900 bg-gray-50 border-gray-300 outline-none textarea-transiton focus:ring-2 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-90 disabled:pointer-events-none dark:text-white dark:bg-slate-900 dark:border-gray-700 dark:placeholder-gray-400 ' +
           (avalabelSend() && !isTouchScren() ? 'pr-[148px]' : '')
-        "
-        [style]="
+        " [style]="
           removeRounder ? 'border-radius: 0.5rem' : 'border-radius: 5rem'
-        "
-        placeholder="Ask me anything..."
-      ></textarea>
+        " (resized)="onResized($event)" [maxHeight]="180" textareaAutoresize></textarea>
+
+
       <div class="absolute top-1/2 end-2 -translate-y-1/2 flex gap-x-2">
-        <button
-          type="button"
-          title="upload file or file to chat"
-          disabled
-          class="w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-        >
+        <button type="button" title="upload file or file to chat" disabled
+          class="w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
           <ng-icon name="ionCloudUploadOutline" size="18" />
         </button>
-        <button
-          type="button"
-          title="Voice search"
-          disabled
-          [class]="
+        <button type="button" title="Voice search" disabled [class]="
             avalabelSend() && isTouchScren()
               ? 'hidden'
               : 'w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600'
-          "
-        >
+          ">
           <ng-icon name="ionMicOutline" size="18" />
         </button>
-        <button
-          type="button"
-          title="Send message"
-          [disabled]="isAvailable"
-          [class]="
+        <button type="button" title="Send message" [disabled]="isAvailable" [class]="
             avalabelSend()
               ? 'w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600'
               : 'hidden'
-          "
-          (click)="onSubmit($event)"
-        >
+          " (click)="onSubmit($event)">
           <ng-icon name="ionArrowUp" size="18" />
         </button>
       </div>

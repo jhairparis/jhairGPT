@@ -7,10 +7,10 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { BackendService } from '../../../src/services/backend.service';
+import { ChatService } from '../../services/chats/chats.service';
 import { BubbleComponent } from '../bubble/bubble.component';
 import { ActivatedRoute } from '@angular/router';
-import { SkeletonComponent } from '../bubble/skeleton/skeleton.component';
+import { SkeletonComponent } from '../skeleton/skeleton.component';
 
 @Component({
   selector: 'app-message',
@@ -21,12 +21,12 @@ import { SkeletonComponent } from '../bubble/skeleton/skeleton.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MessageComponent {
-  private backendService = inject(BackendService);
+  private chatService = inject(ChatService);
   private activatedRoute = inject(ActivatedRoute);
   private chatId = this.activatedRoute.snapshot.params['id'];
 
   time = new Date();
-  oldChat$ = this.backendService.getChat(this.chatId);
+  oldChat$ = this.chatService.getChat(this.chatId);
   @Input() newMessages!: any[];
   @Input() question!: number;
   @Output() setText = new EventEmitter<string>();
