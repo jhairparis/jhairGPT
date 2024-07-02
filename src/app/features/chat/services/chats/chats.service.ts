@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  private url = 'https://jhairparis.com/api';
-  //private url = 'http://localhost:3000/api';
+  private url = environment.apiUrl;
   private http = inject(HttpClient);
 
   getChat(chatId: string) {
