@@ -1,5 +1,4 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { BubbleComponent } from '../bubble/bubble.component';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
@@ -11,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { TextareaAutoresizeDirective } from '../../directives/textarea-autoresize/textarea-autoresize.directive';
+import { StatusComponent } from '../../../auth/components/status/status.component';
 
 const Model: Record<string, string> = {
   '1': 'auto',
@@ -30,7 +30,8 @@ const Model: Record<string, string> = {
     FormsModule,
     MessageComponent,
     RouterModule,
-    TextareaAutoresizeDirective
+    TextareaAutoresizeDirective,
+    StatusComponent,
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css',
@@ -39,18 +40,9 @@ export class ChatComponent {
   private activatedRoute = inject(ActivatedRoute);
   private backendService = inject(ChatService);
   private router = inject(Router);
-  private platformId = inject(PLATFORM_ID);
   private chatId = this.activatedRoute.snapshot.params['id'];
 
   existId = this.chatId ? true : false;
-  origin: string | undefined;
-
-  constructor() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.origin = window.location.origin.replace(/\//g, "%2F").replace(/:/g, '%3A');
-    }
-  }
-
 
   newMessages: any[] = [];
   showQuestions = 2;

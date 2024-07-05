@@ -28,6 +28,8 @@ import {
   ionCreateOutline,
   ionMenu,
   ionClose,
+  ionLogInOutline,
+  ionLogOutOutline,
 } from '@ng-icons/ionicons';
 
 declare global {
@@ -62,6 +64,8 @@ declare global {
       ionCreateOutline,
       ionMenu,
       ionClose,
+      ionLogInOutline,
+      ionLogOutOutline,
     }),
   ],
   templateUrl: './app.component.html',
