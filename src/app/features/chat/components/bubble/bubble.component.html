@@ -1,42 +1,31 @@
 <li class="max-w-4xl py-2 px-4 sm:px-6 lg:px-8 mx-auto flex gap-x-2 sm:gap-x-4">
   @if (author === "humman") {
-  <span
-    class="w-10 h-10 min-w-10 min-h-10 rounded-full bg-gradient-to-bl from-blue-600 to-violet-600 overflow-hidden"
-  >
+  <span class="w-10 h-10 min-w-10 min-h-10 rounded-full bg-gradient-to-bl from-blue-600 to-violet-600 overflow-hidden">
     <ng-icon name="ionPerson" class="flex-shrink-0 text-white mt-1" size="38" />
   </span>
-  } @else if (author === "model") {
+  } @else if (author === "assistant") {
   <span
-    class="w-10 h-10 min-w-10 min-h-10 flex flex-col justify-center items-center rounded-full bg-gradient-to-bl from-violet-600 to-slate-800 overflow-hidden"
-  >
-    <ng-icon
-      name="ionSparkles"
-      class="flex-shrink-0 text-white mt-0.5"
-      size="30"
-    />
+    class="w-10 h-10 min-w-10 min-h-10 flex flex-col justify-center items-center rounded-full bg-gradient-to-bl from-violet-600 to-slate-800 overflow-hidden">
+    <ng-icon name="ionSparkles" class="flex-shrink-0 text-white mt-0.5" size="30" />
   </span>
   }
 
   <div class="grow max-w-[90%] md:max-w-2xl w-full space-y-3">
     <div class="space-y-3 text-sm text-gray-800 dark:text-white">
-      <div
-        [innerHTML]="
+      <div [innerHTML]="
           message.text
             | markdown : { katex: true, clipboard: true, mermaid: true, mermaidOptions: { theme: mermaidTheme}, }
             | async
-        "
-      ></div>
+        "></div>
     </div>
 
     @if (showQuestion) {
     <div>
-      @for (item of message.questions; track $index) {
-      <button
-        type="button"
+      @for (item of q| keyvalue; track item) {
+      <button type="button"
         class="mb-2.5 me-1.5 py-2 px-3 inline-flex justify-center items-center gap-x-2 rounded-lg border border-blue-600 bg-white text-blue-600 align-middle hover:bg-blue-50 text-sm dark:bg-neutral-900 dark:text-blue-500 dark:border-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400"
-        (click)="onQuestionClick($index)"
-      >
-        {{ item }}
+        (click)="onQuestionClick(item.key)">
+        {{ item.value }}
       </button>
       }
     </div>

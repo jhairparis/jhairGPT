@@ -75,8 +75,9 @@ export class ChatComponent {
         );
 
         const bubbles = {
-          user: { text: this.textInput, questions: [] },
-          model: response.result,
+          user: { text: this.textInput, type: 'text' },
+          assistant: response.result.answer,
+          questions: response.result.questions,
         };
 
         this.newMessages = [...this.newMessages, bubbles];

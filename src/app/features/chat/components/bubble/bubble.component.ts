@@ -6,16 +6,11 @@ import {
   inject,
   Output,
   EventEmitter,
-  PLATFORM_ID
+  PLATFORM_ID,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { NgIcon } from '@ng-icons/core';
 import { MarkdownPipe, MarkdownService, MermaidAPI } from 'ngx-markdown';
-
-type bubleChat = {
-  text: string;
-  questions: string[];
-};
 
 @Component({
   selector: 'app-bubble',
@@ -26,11 +21,33 @@ type bubleChat = {
 })
 export class BubbleComponent implements OnInit {
   markdownService = inject(MarkdownService);
+  q: { [key: string]: string } = {};
+
   private platformId = inject(PLATFORM_ID);
-  @Input() message: bubleChat = { text: '', questions: [] };
-  @Input() author!: 'model' | 'humman';
+  private _q!: { [key: string]: string };
+
+  @Input() message!: { text: string; type: string };
+  @Input() author!: 'assistant' | 'humman';
   @Input() timestamp = new Date();
   @Input() showQuestion!: boolean;
+
+  @Input()
+  set questions(value: { [key: string]: string }) {
+    this._q = value;
+    this.updateQuestions();
+  }
+
+  get questions(): { [key: string]: string } {
+    return this._q;
+  }
+
+  updateQuestions() {
+    this.q = {
+      ...this.questions,
+    }
+
+    delete this.q["selected"];
+  }
 
   @Output() questionClick = new EventEmitter<string>();
 
@@ -64,8 +81,8 @@ export class BubbleComponent implements OnInit {
     };
   }
 
-  onQuestionClick(index: number) {
-    this.questionClick.emit(this.message.questions[index]);
+  onQuestionClick(key: string) {
+    this.questionClick.emit(this.q[key]);
   }
 
   isDark() {

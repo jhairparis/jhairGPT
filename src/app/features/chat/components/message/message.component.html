@@ -1,31 +1,17 @@
 <ul class="mt-5 text-white">
-  @if (oldChat$ | async; as res) { @for (bubble of res.result.history; track
-  bubble; let last = $last) {
-  <app-bubble
-    [message]="bubble.txt"
-    [author]="bubble.role === 'user' ? 'humman' : 'model'"
-    [timestamp]="time"
-    [showQuestion]="last && newMessages.length === 0"
-    (questionClick)="receiveQuestion($event)"
-  />
-  } }@else {
-  <app-skeleton [author]="'humman'" />
-  <app-skeleton [author]="'model'" />
+  @if (oldChat$ | async; as res) {
+  @for (bubbles of res.result.history; track bubbles; let last = $last) {
+  @for (bubble of bubbles.content; track bubble) {
+  <app-bubble [message]="bubble" [author]="bubbles.role === 'user' ? 'humman' : 'assistant'" [timestamp]="time"
+    [showQuestion]="last && newMessages.length === 0" (questionClick)="receiveQuestion($event)"
+    [questions]="res.result.chatQuestions[res.result.chatQuestions.length -1]" />
+  }
+  }
   }
   <!-- new Message -->
   @for (item of newMessages; track item; let last = $last) {
-  <app-bubble
-    [message]="item.user"
-    [author]="'humman'"
-    [timestamp]="time"
-    (questionClick)="receiveQuestion($event)"
-  />
-  <app-bubble
-    [message]="item.model"
-    [author]="'model'"
-    [timestamp]="time"
-    [showQuestion]="last"
-    (questionClick)="receiveQuestion($event)"
-  />
+  <app-bubble [message]="item.user" [author]="'humman'" [timestamp]="time" (questionClick)="receiveQuestion($event)" />
+  <app-bubble [message]="item.assistant" [author]="'assistant'" [timestamp]="time" [showQuestion]="last"
+    (questionClick)="receiveQuestion($event)" [questions]="item.questions" />
   }
 </ul>

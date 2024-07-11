@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,7 +15,7 @@ import { SkeletonComponent } from '../skeleton/skeleton.component';
 @Component({
   selector: 'app-message',
   standalone: true,
-  imports: [CommonModule, BubbleComponent, SkeletonComponent],
+  imports: [CommonModule, BubbleComponent, SkeletonComponent, JsonPipe],
   templateUrl: './message.component.html',
   styleUrl: './message.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,7 +31,7 @@ export class MessageComponent {
   @Input() question!: number;
   @Output() setText = new EventEmitter<string>();
 
-  receiveQuestion(v: string) {
-    this.setText.emit(v);
+  receiveQuestion(q: string) {
+    this.setText.emit(q);
   }
 }

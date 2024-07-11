@@ -8,5 +8,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './skeleton.component.css',
 })
 export class SkeletonComponent {
-  @Input() author!: 'model' | 'humman';
+  @Input() author!: 'assistant' | 'humman';
 }
