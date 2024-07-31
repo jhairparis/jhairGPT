@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { BubbleComponent } from '../bubble/bubble.component';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
+import { NavbarComponent } from '../navbar/navbar.component';
 import { NgIcon } from '@ng-icons/core';
 import { ChatService } from '../../services/chats/chats.service';
 import { CommonModule } from '@angular/common';

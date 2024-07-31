@@ -10,7 +10,19 @@ export class ChatService {
   private http = inject(HttpClient);
 
   getChat(chatId: string) {
-    return this.http.get<any>(`${this.url}/gpt?id=${chatId}`);
+    return this.http.get<any>(`${this.url}/gpt/chat/${chatId}`);
+  }
+
+  getChats() {
+    return this.http.get<any>(`${this.url}/gpt/chat`, {
+      withCredentials: true,
+    });
+  }
+
+  deleteChat(chatId: string) {
+    return this.http.delete<any>(`${this.url}/gpt/chat/${chatId}`, {
+      withCredentials: true,
+    });
   }
 
   initialiazeChat(message: string, model: string) {
