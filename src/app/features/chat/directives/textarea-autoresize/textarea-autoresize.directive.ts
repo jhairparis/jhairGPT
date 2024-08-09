@@ -4,9 +4,11 @@ import { Directive, HostListener, ElementRef, OnInit, Output, EventEmitter, Inpu
   selector: '[textareaAutoresize]',
   standalone: true
 })
-export class TextareaAutoresizeDirective implements OnInit {
+export class TextareaAutoresizeDirective {
   @Output() resized: EventEmitter<number> = new EventEmitter();
   @Input() maxHeight: number = 300;
+  lengthOld = -99;
+
   constructor(private elementRef: ElementRef) { }
 
   @HostListener(':input')
@@ -14,18 +16,25 @@ export class TextareaAutoresizeDirective implements OnInit {
     this.resize();
   }
 
-  ngOnInit() {
-    if (this.elementRef.nativeElement.scrollHeight) {
-      setTimeout(() => this.resize());
-    }
+  responsive(width: number): number {
+    return Math.round(width * 0.131) - 19
   }
 
+  @HostListener('window:resize')
   resize() {
-    if (this.elementRef.nativeElement.scrollHeight + 2 > this.maxHeight) {
+    let scrollHeight = this.elementRef.nativeElement.scrollHeight;
+
+    if (scrollHeight > this.maxHeight)
       return;
-    }
+
     this.elementRef.nativeElement.style.height = '0';
-    this.elementRef.nativeElement.style.height = (this.elementRef.nativeElement.scrollHeight + 2) + 'px';
-    this.resized.emit(this.elementRef.nativeElement.scrollHeight);
+    const responsiveLength = this.responsive(this.elementRef.nativeElement.clientWidth)
+
+    if (this.lengthOld >= this.elementRef.nativeElement.value.length && this.elementRef.nativeElement.value.length < responsiveLength)
+      scrollHeight = this.elementRef.nativeElement.scrollHeight;
+
+    this.lengthOld = this.elementRef.nativeElement.value.length;
+    this.elementRef.nativeElement.style.height = scrollHeight + 'px';
+    this.resized.emit(scrollHeight);
   }
 }

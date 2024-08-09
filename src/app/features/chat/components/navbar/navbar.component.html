@@ -2,7 +2,7 @@
     'fixed flex flex-col justify-between top-0 left-0 z-40 w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-800 ' +
     (hidden ? ' translate-x-0' : '-translate-x-full')
   " aria-label="Sidebar">
-  <div class="flex flex-wrap sm:justify-between sm:flex-nowrap z-50 w-full h-12 px-2 py-1">
+  <div class="flex flex-wrap justify-between z-50 w-full h-12 px-2 py-1">
     <button type="button"
       class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700"
       (click)="toggleSidebar()" title="Close sidebar">

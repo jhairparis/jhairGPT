@@ -54,6 +54,8 @@ export class ChatComponent {
   removeRounder = false;
   viewSidebar = false;
 
+  classInput = " bg-gray-50 dark:bg-slate-900 ";
+
   async chatting() {
     const message = this.textInput.trim();
 
@@ -110,11 +112,12 @@ export class ChatComponent {
     }
   }
 
-  onSubmit(e: Event) {
-    if (!this.isTouchScren()) {
-      e.preventDefault();
-      this.chatting();
-    }
+  mobileChatting(e: Event) {
+    if (this.isTouchScren())
+      return;
+
+    e.preventDefault();
+    this.chatting();
   }
 
   avalabelSend() {
@@ -131,7 +134,7 @@ export class ChatComponent {
   }
 
   onResized(e: number) {
-    if (e >= 70) this.removeRounder = true;
+    if (e > 20) this.removeRounder = true;
     else this.removeRounder = false;
   }
 

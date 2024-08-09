@@ -20,7 +20,7 @@
     text-decoration-color, opacity, box-shadow, transform, backdrop-filter;
   transition-timing-function: cubic-bezier(0.85, 0.07, 0.53, 1.01),
     cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 290ms, 500ms;
+  transition-duration: 290ms, 220ms;
 }
 
 .animation {
@@ -33,18 +33,22 @@
   from {
     width: 0;
   }
+
   60% {
     padding-right: 0px;
   }
+
   to {
     width: 24em;
     padding-right: 5px;
   }
 }
+
 @keyframes blinkTextCursor {
   from {
     border-right-color: rgba(255, 255, 255, 0.75);
   }
+
   to {
     border-right-color: transparent;
   }

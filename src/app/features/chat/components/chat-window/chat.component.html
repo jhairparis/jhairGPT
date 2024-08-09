@@ -6,18 +6,21 @@
   ">
   <header
     class="sticky top-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full h-12 px-2 py-1 bg-gray-50 dark:bg-slate-900">
-    <button type="button" [class]="
+
+    <nav class="relative w-full pl-2 sm:pl-3 lg:pl-4 pr-4 sm:pr-6 lg:pr-8 sm:flex sm:items-center sm:justify-between">
+      <div class="basis-full grow">
+        <ul class="flex flex-row-reverse justify-between sm:flex-row sm:items-center py-2 md:py-0">
+          <li class="order-last sm:order-first">
+            <button type="button" [class]="
         !viewSidebar
           ? 'inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700'
           : 'hidden'
       " title="Open sidebar" (click)="toogleNavbar()">
-      <span class="sr-only">Open sidebar</span>
-      <ng-icon name="ionMenu" size="24" class="w-6 h-6" aria-hidden="true" />
-    </button>
-    <nav class="relative w-full pl-2 sm:pl-3 lg:pl-4 pr-4 sm:pr-6 lg:pr-8 sm:flex sm:items-center sm:justify-between">
-      <div class="hidden basis-full grow sm:block">
-        <ul class="flex flex-col sm:flex-row sm:items-center py-2 md:py-0">
-          <li [class]="!viewSidebar ? '' : 'hidden'">
+              <span class="sr-only">Open sidebar</span>
+              <ng-icon name="ionMenu" size="24" class="w-6 h-6" aria-hidden="true" />
+            </button>
+          </li>
+          <li [class]="!viewSidebar ? '' : 'sm:hidden'">
             <a [routerLink]="['/']" role="button" title="New chat"
               class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700">
               <span class="sr-only">New chat</span>
@@ -25,7 +28,7 @@
             </a>
           </li>
 
-          <li>
+          <li class="hidden sm:block">
             <select data-hs-select='{
                 "placeholder": "Select Model...",
                 "toggleTag": "<button type=\"button\"><span class=\"me-2 size-6\" data-icon></span><span class=\"text-gray-800 dark:text-neutral-200\" data-title></span></button>",
@@ -58,7 +61,7 @@
             </select>
           </li>
 
-          <li class="flex items-center gap-x-2 py-2 sm:py-0 sm:ms-auto">
+          <li class="hidden sm:flex items-center gap-x-2 py-2 sm:py-0 sm:ms-auto">
             <app-status />
           </li>
         </ul>
@@ -95,19 +98,25 @@
     </div>
   </main>
 
-  <footer class="w-full max-w-4xl mx-auto p-3 sm:py-6">
-    <div class="relative">
-      <textarea autofocus rows="1" [disabled]="isAvailable" [(ngModel)]="textInput" (keydown.enter)="onSubmit($event)"
-        (keydown.shift.enter)="newLine()" (resized)="onResized($event)" type="text" placeholder="Ask me anything..."
-        [class]="
-          'block w-full p-4 pr-24 text-sm border resize-none text-gray-900 bg-gray-50 border-gray-300 outline-none textarea-transiton focus:ring-2 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-90 disabled:pointer-events-none dark:text-white dark:bg-slate-900 dark:border-gray-700 dark:placeholder-gray-400 ' +
-          (avalabelSend() && !isTouchScren() ? 'pr-[148px]' : '')
-        " [style]="
-          removeRounder ? 'border-radius: 0.5rem' : 'border-radius: 5rem'
+  <footer class="w-full min-w-80 max-w-4xl mx-auto p-3 sm:py-6">
+    <div
+      [class]="'flex flex-row items-stretch w-full px-[26px] pr-3 border border-gray-300 dark:border-gray-700 outline-none textarea-transiton focus:ring-2 focus:border-blue-500 focus:ring-blue-500 ' + classInput"
+      [style]="
+        removeRounder ? 'border-radius: 0.5rem; flex-direction:column' : 'border-radius: 5rem;flex-direction:row'">
+
+      <div [class]="'flex-1 ' +(removeRounder? 'mr-3.5':'')">
+
+        <textarea autofocus rows=" 1" [disabled]="isAvailable" [(ngModel)]="textInput"
+          (keydown.enter)="mobileChatting($event)" (keydown.shift.enter)="newLine()" type="text"
+          placeholder="Ask me anything..." [class]="
+          'w-full my-4 text-sm resize-none text-gray-900 disabled:opacity-90 disabled:pointer-events-none dark:text-white dark:placeholder-gray-400'+
+classInput +
+      (avalabelSend() && !isTouchScren() ? '' : '' )
         " (resized)="onResized($event)" [maxHeight]="180" textareaAutoresize></textarea>
 
+      </div>
 
-      <div class="absolute top-1/2 end-2 -translate-y-1/2 flex gap-x-2">
+      <div [class]="'w-36 flex items-center justify-end flex-row gap-x-2 ' +(removeRounder ? 'self-end mb-2':'')">
         <button type="button" title="upload file or file to chat" disabled
           class="w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
           <ng-icon name="ionCloudUploadOutline" size="18" />
@@ -123,7 +132,7 @@
             avalabelSend()
               ? 'w-10 h-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-white dark:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600'
               : 'hidden'
-          " (click)="onSubmit($event)">
+          " (click)="chatting()">
           <ng-icon name="ionArrowUp" size="18" />
         </button>
       </div>
