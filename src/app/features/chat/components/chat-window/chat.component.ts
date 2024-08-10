@@ -124,8 +124,9 @@ export class ChatComponent {
     return this.textInput.length >= 5;
   }
 
-  // --
   toogleNavbar() {
+    if (this.isTouchScren())
+      return;
     this.viewSidebar = !this.viewSidebar;
   }
 
