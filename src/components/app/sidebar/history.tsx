@@ -7,7 +7,7 @@ import {
   LineChart,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -24,11 +24,15 @@ import { usePathname } from "next/navigation";
 const History = () => {
   const [chats, setChats] = useState<any[]>([]);
   const pathname = usePathname();
+  const hasFetchedChats = useRef(false);
 
   useEffect(() => {
-    (async () => {
-      setChats(await getChats());
-    })();
+    if (!hasFetchedChats.current) {
+      hasFetchedChats.current = true;
+      (async () => {
+        setChats(await getChats());
+      })();
+    }
   }, []);
 
   return (

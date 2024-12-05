@@ -3,11 +3,11 @@ import { notFound } from "next/navigation";
 const url = process.env.NEXT_PUBLIC_URL;
 
 export const getChat = async (chatId: string) => {
-  const info = await fetch(`${url}/gpt/chat/${chatId}`);
+  const info = await fetch(`${url}/gpt/chat/${chatId}`, {
+    next: { revalidate: 60 },
+  });
 
   const { result, message } = await info.json();
-
-  // console.debug(`Get one chat '${url}/gpt/chat/${chatId}'\n result:`, result);
 
   if (info.status !== 200) return notFound();
 
@@ -34,8 +34,8 @@ export const deleteChat = (chatId: string) => {
   });
 };
 
-export const initialiazeChat = (message: string, model: string) => {
-  return fetch(`${url}/gpt`, {
+export const initializeChat = async (message: string, model: string) => {
+  const response = await fetch(`${url}/gpt`, {
     method: "post",
     credentials: "include",
     headers: {
@@ -47,6 +47,10 @@ export const initialiazeChat = (message: string, model: string) => {
       model: model,
     }),
   });
+
+  const res = await response.json();
+
+  return res;
 };
 
 export const chatting = async (

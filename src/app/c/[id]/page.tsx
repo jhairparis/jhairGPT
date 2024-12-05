@@ -23,7 +23,7 @@ export default async function ChatInterface({ params }: ChatParams) {
           </div>
         </div>
       </main>
-      <footer className="flex-none w-full min-w-80 max-w-4xl mx-auto">
+      <footer className="flex-none w-full min-w-80 max-w-4xl mx-auto relative">
         <TextInput chatId={params.id} />
       </footer>
     </div>

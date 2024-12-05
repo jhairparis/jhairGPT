@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import {
   DragHandleButton,
   SideMenu,
@@ -19,7 +19,7 @@ import {
   UnnestBlockButton,
   DragHandleMenu,
 } from "@blocknote/react";
-import { filterSuggestionItems } from "@blocknote/core";
+import { filterSuggestionItems, locales } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { SuggestionMenuControllerCustom } from "./SuggestionMenuControllerCustom";
 import type { BlockNoteEditor, SuggestionMenuState } from "@blocknote/core";
@@ -28,9 +28,10 @@ import { RemoveBlockButton } from "./remove-button";
 import { useTheme } from "next-themes";
 import "@blocknote/mantine/style.css";
 import { Button } from "@/components/ui/button";
-import { ArrowUp } from "lucide-react";
-import { chatting } from "../../utils/service-chat";
+import { chatting, initializeChat } from "../../utils/service-chat";
 import { useChatContext } from "../../providers/chat";
+import { useRouter } from "next/navigation";
+import Send from "./send";
 
 const noImplement = ["Audio", "Video", "Image", "File"];
 
@@ -43,14 +44,39 @@ const getCustomSlashMenuItems = (
 ];
 
 const TextInput = ({ chatId }: any) => {
-  const editor = useCreateBlockNote();
+  const locale = locales.en;
+  const editor = useCreateBlockNote({
+    dictionary: {
+      ...locale,
+      placeholders: {
+        ...locale.placeholders,
+        default: "Tell me what you want most?",
+        heading: "Title",
+      },
+    },
+  });
   const { resolvedTheme } = useTheme();
   const [show, setShow] = useState(false);
   const { chat, setChat } = useChatContext();
+  const router = useRouter();
+  const sendRef = useRef<any>(null);
 
   const handleUpdate = useCallback((state: SuggestionMenuState) => {
     setShow(state.show);
   }, []);
+
+  async function startChat() {
+    setChat({
+      ...chat,
+      currentChat: { history: [], chatQuestions: [], historyInfo: [] },
+    });
+
+    const markdown = await editor.blocksToMarkdownLossy(editor.document);
+
+    const res = await initializeChat(markdown, "gemini-1.5-flash");
+
+    return router.push(`/c/${res.chatId}`);
+  }
 
   async function sendMessage() {
     const markdown = await editor.blocksToMarkdownLossy(editor.document);
@@ -59,18 +85,26 @@ const TextInput = ({ chatId }: any) => {
     const { answer, questions } = await chatting(
       markdown,
       chatId,
-      "gemini-1.5-flash-latest"
+      "gemini-1.5-flash"
     );
 
     const newHistory = [
-      ...chat.history,
+      ...(chat.currentChat.history || []),
       { role: "user", content: [{ type: "text", text: markdown }] },
       { role: "assistant", content: [answer] },
     ];
 
-    const chatQuestions = [...chat.chatQuestions, questions];
+    const chatQuestions = [
+      ...(chat.currentChat.chatQuestions || []),
+      questions,
+    ];
 
-    setChat({ ...chat, history: newHistory, chatQuestions });
+    editor.removeBlocks([...editor.document.map((block) => block.id)]);
+
+    setChat({
+      ...chat,
+      currentChat: { ...chat.currentChat, history: newHistory, chatQuestions },
+    });
   }
 
   async function handleNewLine() {
@@ -124,13 +158,21 @@ const TextInput = ({ chatId }: any) => {
       console.debug("Empty block", error);
     }
   }
+  const handleSend = () => {
+    sendRef.current?.play();
+    if (!chatId) {
+      startChat();
+      return;
+    }
+    sendMessage();
+  };
 
   const shortcuts = async (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       event.preventDefault();
 
       if (!event.shiftKey && !event.ctrlKey && !show) {
-        sendMessage();
+        handleSend();
       } else if (event.shiftKey) {
         handleNewLine();
       } else if (event.ctrlKey) {
@@ -212,15 +254,7 @@ const TextInput = ({ chatId }: any) => {
         />
       </BlockNoteView>
 
-      <div className="w-full h-full relative">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute bottom-0 right-0 my-4 mx-2"
-        >
-          <ArrowUp />
-        </Button>
-      </div>
+      <Send ref={sendRef} onClick={handleSend} />
     </div>
   );
 };

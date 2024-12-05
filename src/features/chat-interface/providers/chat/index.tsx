@@ -1,20 +1,50 @@
 "use client";
-import { useState } from "react";
-import { createContext, useContext } from "react";
+import { useState, createContext, useContext } from "react";
 
-type ChatContextProps = Record<string, any>;
+type ChatState = {
+  user: {
+    data: Record<string, any>;
+    authenticated: boolean;
+  };
+  desktop: {
+    historyOpen: boolean;
+  };
+  currentChat: {
+    history?: any[];
+    chatQuestions?: any[];
+    historyInfo?: any[];
+  };
+};
 
-const ChatContext = createContext<ChatContextProps>({});
+type ChatContextType = {
+  chat: ChatState;
+  setChat: React.Dispatch<React.SetStateAction<ChatState>>;
+};
 
-export const useChatContext = () => useContext<ChatContextProps>(ChatContext);
+export const defaultChatState: ChatState = {
+  user: {
+    data: {},
+    authenticated: false,
+  },
+  desktop: {
+    historyOpen: false,
+  },
+  currentChat: {
+    history: [],
+    chatQuestions: [],
+    historyInfo: [],
+  },
+};
+
+const ChatContext = createContext<ChatContextType>({
+  chat: defaultChatState,
+  setChat: () => {},
+});
+
+export const useChatContext = () => useContext(ChatContext);
 
 export const ChatProvider = ({ children }: any) => {
-  const [chat, setChat] = useState({
-    desktop: {
-      historyOpen: false,
-    },
-    history: [],
-  });
+  const [chat, setChat] = useState(defaultChatState);
 
   return (
     <ChatContext.Provider value={{ chat, setChat }}>

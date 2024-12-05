@@ -10,6 +10,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import Ad from "./ad";
+import Link from "next/link";
 
 const AppSidebar = () => {
   const { toggleSidebar } = useSidebar();
@@ -29,8 +30,10 @@ const AppSidebar = () => {
           </Button>
 
           <Button variant="outline" size="icon" className="ml-auto">
-            <WandSparkles className="h-5 w-5" />
-            <span className="sr-only">New chat</span>
+            <Link href="/">
+              <WandSparkles className="h-5 w-5" />
+              <span className="sr-only">New chat</span>
+            </Link>
           </Button>
         </div>
       </SidebarHeader>
