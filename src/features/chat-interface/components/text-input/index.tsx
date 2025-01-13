@@ -8,30 +8,20 @@ import {
   RemoveBlockItem,
   DefaultReactSuggestionItem,
   getDefaultReactSlashMenuItems,
-  BasicTextStyleButton,
-  BlockTypeSelect,
-  CreateLinkButton,
-  FileCaptionButton,
-  FileReplaceButton,
-  FormattingToolbar,
-  FormattingToolbarController,
-  NestBlockButton,
-  UnnestBlockButton,
   DragHandleMenu,
 } from "@blocknote/react";
 import { filterSuggestionItems, locales } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
-import { SuggestionMenuControllerCustom } from "./SuggestionMenuControllerCustom";
+import { SuggestionMenuControllerCustom } from "./custom/SuggestionMenuController";
 import type { BlockNoteEditor, SuggestionMenuState } from "@blocknote/core";
 import type { KeyboardEvent } from "react";
 import { RemoveBlockButton } from "./remove-button";
 import { useTheme } from "next-themes";
 import "@blocknote/mantine/style.css";
-import { Button } from "@/components/ui/button";
-import { chatting, initializeChat } from "../../utils/service-chat";
-import { useChatContext } from "../../providers/chat";
-import { useRouter } from "next/navigation";
 import Send from "./send";
+import FormattingToolbarControllerCustom from "./custom/FormattingToolbarController";
+import useChat from "../../hooks/useChat";
+import { usePathname } from "next/navigation";
 
 const noImplement = ["Audio", "Video", "Image", "File"];
 
@@ -43,7 +33,7 @@ const getCustomSlashMenuItems = (
   ),
 ];
 
-const TextInput = ({ chatId }: any) => {
+const TextInput = () => {
   const locale = locales.en;
   const editor = useCreateBlockNote({
     dictionary: {
@@ -56,56 +46,15 @@ const TextInput = ({ chatId }: any) => {
     },
   });
   const { resolvedTheme } = useTheme();
+  const pathname = usePathname();
+  const chatId = pathname.split("/").pop() as string;
   const [show, setShow] = useState(false);
-  const { chat, setChat } = useChatContext();
-  const router = useRouter();
   const sendRef = useRef<any>(null);
+  const { updateChat, createChat } = useChat();
 
   const handleUpdate = useCallback((state: SuggestionMenuState) => {
     setShow(state.show);
   }, []);
-
-  async function startChat() {
-    setChat({
-      ...chat,
-      currentChat: { history: [], chatQuestions: [], historyInfo: [] },
-    });
-
-    const markdown = await editor.blocksToMarkdownLossy(editor.document);
-
-    const res = await initializeChat(markdown, "gemini-1.5-flash");
-
-    return router.push(`/c/${res.chatId}`);
-  }
-
-  async function sendMessage() {
-    const markdown = await editor.blocksToMarkdownLossy(editor.document);
-    console.debug(markdown);
-
-    const { answer, questions } = await chatting(
-      markdown,
-      chatId,
-      "gemini-1.5-flash"
-    );
-
-    const newHistory = [
-      ...(chat.currentChat.history || []),
-      { role: "user", content: [{ type: "text", text: markdown }] },
-      { role: "assistant", content: [answer] },
-    ];
-
-    const chatQuestions = [
-      ...(chat.currentChat.chatQuestions || []),
-      questions,
-    ];
-
-    editor.removeBlocks([...editor.document.map((block) => block.id)]);
-
-    setChat({
-      ...chat,
-      currentChat: { ...chat.currentChat, history: newHistory, chatQuestions },
-    });
-  }
 
   async function handleNewLine() {
     const blocks = editor.document;
@@ -158,13 +107,29 @@ const TextInput = ({ chatId }: any) => {
       console.debug("Empty block", error);
     }
   }
-  const handleSend = () => {
+
+  const handleSend = async () => {
     sendRef.current?.play();
+    const markdown = await editor.blocksToMarkdownLossy(editor.document);
+    const clearEditorBlocks = () =>
+      editor.removeBlocks([...editor.document.map((block) => block.id)]);
+
     if (!chatId) {
-      startChat();
+      createChat.mutate(
+        { message: markdown, model: "gemini-1.5-flash" },
+        {
+          onSuccess: clearEditorBlocks,
+        }
+      );
       return;
     }
-    sendMessage();
+
+    updateChat.mutate(
+      { message: markdown, model: "gemini-1.5-flash" },
+      {
+        onSuccess: clearEditorBlocks,
+      }
+    );
   };
 
   const shortcuts = async (event: KeyboardEvent<HTMLDivElement>) => {
@@ -200,43 +165,7 @@ const TextInput = ({ chatId }: any) => {
           onUpdate={handleUpdate}
           show={show}
         />
-        <FormattingToolbarController
-          formattingToolbar={() => (
-            <FormattingToolbar>
-              <BlockTypeSelect key={"blockTypeSelect"} />
-
-              <FileCaptionButton key={"fileCaptionButton"} />
-              <FileReplaceButton key={"replaceFileButton"} />
-
-              <BasicTextStyleButton
-                basicTextStyle={"bold"}
-                key={"boldStyleButton"}
-              />
-              <BasicTextStyleButton
-                basicTextStyle={"italic"}
-                key={"italicStyleButton"}
-              />
-              <BasicTextStyleButton
-                basicTextStyle={"underline"}
-                key={"underlineStyleButton"}
-              />
-              <BasicTextStyleButton
-                basicTextStyle={"strike"}
-                key={"strikeStyleButton"}
-              />
-
-              <BasicTextStyleButton
-                key={"codeStyleButton"}
-                basicTextStyle={"code"}
-              />
-
-              <NestBlockButton key={"nestBlockButton"} />
-              <UnnestBlockButton key={"unnestBlockButton"} />
-
-              <CreateLinkButton key={"createLinkButton"} />
-            </FormattingToolbar>
-          )}
-        />
+        <FormattingToolbarControllerCustom />
         <SideMenuController
           sideMenu={(props) => (
             <SideMenu {...props}>

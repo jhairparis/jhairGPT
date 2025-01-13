@@ -1,30 +1,36 @@
 "use client";
-import { useEffect } from "react";
 import AssistantBubble from "./assistant-bubble";
 import ActionsButtons from "./assistant-bubble/ActionsButtons";
 import UserBubble from "./user-bubble";
-import { useChatContext } from "../../providers/chat";
+import { AiOutlineLoading } from "react-icons/ai";
+import useChat from "../../hooks/useChat";
+import { notFound } from "next/navigation";
 
-const Messages = ({ data }: any) => {
-  const { setChat, chat } = useChatContext();
+const Messages = () => {
+  const { chatQuery } = useChat();
+  const { isPending, isError, data, error } = chatQuery;
 
-  useEffect(() => {
-    setChat({
-      ...chat,
-      currentChat: data,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center h-20">
+        <AiOutlineLoading className="animate-spin" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return notFound();
+  }
 
   return (
     <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto">
       <ul className="mt-5 text-white">
-        {chat.currentChat.history?.map(({ role, content }: any, index: number) =>
+        {data.history?.map(({ role, content }: any, index: number) =>
           role === "user" ? (
             <UserBubble key={index + role} content={content} />
           ) : (
             <AssistantBubble key={index + role} content={content}>
-              <ActionsButtons newAnswer={index === chat.currentChat.history!.length - 1} />
+              <ActionsButtons newAnswer={index === data.history!.length - 1} />
             </AssistantBubble>
           )
         )}

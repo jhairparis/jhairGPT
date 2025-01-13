@@ -1,6 +1,6 @@
 "use client";
 import { X, WandSparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/shared/components/ui/button";
 import History from "./history";
 import {
   Sidebar,
@@ -8,7 +8,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/features/shared/components/ui/sidebar";
 import Ad from "./ad";
 import Link from "next/link";
 

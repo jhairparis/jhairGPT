@@ -1,6 +1,6 @@
 "use client";
 import { WandSparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/features/shared/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -9,8 +9,11 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+} from "@/features/shared/components/ui/select";
+import {
+  SidebarTrigger,
+  useSidebar,
+} from "@/features/shared/components/ui/sidebar";
 import Link from "next/link";
 import ButtonAuth from "@/features/auth/components/button-auth";
 

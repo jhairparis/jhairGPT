@@ -6,34 +6,45 @@ import {
   Package,
   LineChart,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useEffect, useState, useRef } from "react";
+import { Badge } from "@/features/shared/components/ui/badge";
+import { BiSolidErrorAlt } from "react-icons/bi";
+import { AiOutlineLoading } from "react-icons/ai";
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-} from "@/components/ui/sidebar";
+} from "@/features/shared/components/ui/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@radix-ui/react-collapsible";
-import { getChats } from "@/features/chat-interface/utils/service-chat";
 import { usePathname } from "next/navigation";
+import useChat from "@/features/chat-interface/hooks/useChat";
 
 const History = () => {
-  const [chats, setChats] = useState<any[]>([]);
   const pathname = usePathname();
-  const hasFetchedChats = useRef(false);
+  const { chatsQuery } = useChat();
+  const { isPending, isError, data, error } = chatsQuery;
 
-  useEffect(() => {
-    if (!hasFetchedChats.current) {
-      hasFetchedChats.current = true;
-      (async () => {
-        setChats(await getChats());
-      })();
-    }
-  }, []);
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center h-20">
+        <AiOutlineLoading className="animate-spin" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-20 gap-2">
+        <BiSolidErrorAlt className="text-2xl text-red-700" />
+        <p className="text-sm text-red-700">
+          {error?.message || "Failed to load chats"}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -68,7 +79,7 @@ const History = () => {
           </CollapsibleContent>
         </SidebarGroup>
       </Collapsible>
-      {chats.map((chat) => (
+      {data.map((chat: any) => (
         <Link
           key={chat.id}
           href={`/c/${chat.id}`}

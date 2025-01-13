@@ -1,10 +1,9 @@
 import "./globals.css";
-import Provider from "@/components/providers/provider";
+import Provider from "@/features/shared/providers/provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Header from "@/components/app/header";
-import AppSidebar from "@/components/app/sidebar";
-import Messages from "@/features/chat-interface/components/messages";
+import Header from "@/features/shared/components/header";
+import AppSidebar from "@/features/shared/components/sidebar";
 import dynamic from "next/dynamic";
 
 const TextInput = dynamic(
@@ -32,7 +31,12 @@ export default function RootLayout({
             <AppSidebar />
             <div className="flex-1 flex flex-col transition-all duration-300">
               <Header />
-              {children}
+              <div className="flex-1 flex flex-col overflow-hidden">
+                {children}
+                <footer className="flex-none w-full min-w-80 max-w-4xl mx-auto relative">
+                  <TextInput />
+                </footer>
+              </div>
             </div>
           </div>
         </Provider>
