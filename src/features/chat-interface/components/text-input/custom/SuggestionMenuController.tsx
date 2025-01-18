@@ -221,11 +221,15 @@ export function SuggestionMenuControllerCustom<
   }, [editor, onItemClick]);
 
   const getItemsOrDefault = useMemo(() => {
+    const noImplement = ["Audio", "Video", "Image", "File"];
+
     return (
       getItems ||
       ((async (query: string) =>
         filterSuggestionItems(
-          getDefaultReactSlashMenuItems(editor),
+          getDefaultReactSlashMenuItems(editor).filter(
+            (e) => !noImplement.includes(e.title)
+          ),
           query
         )) as any as typeof getItems)
     );

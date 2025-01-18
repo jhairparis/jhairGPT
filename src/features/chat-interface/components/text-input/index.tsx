@@ -1,37 +1,18 @@
 "use client";
 import { useCallback, useState, useRef } from "react";
-import {
-  DragHandleButton,
-  SideMenu,
-  SideMenuController,
-  useCreateBlockNote,
-  RemoveBlockItem,
-  DefaultReactSuggestionItem,
-  getDefaultReactSlashMenuItems,
-  DragHandleMenu,
-} from "@blocknote/react";
-import { filterSuggestionItems, locales } from "@blocknote/core";
+import { SideMenuController, useCreateBlockNote } from "@blocknote/react";
+import { locales } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { SuggestionMenuControllerCustom } from "./custom/SuggestionMenuController";
-import type { BlockNoteEditor, SuggestionMenuState } from "@blocknote/core";
+import type { SuggestionMenuState } from "@blocknote/core";
 import type { KeyboardEvent } from "react";
-import { RemoveBlockButton } from "./remove-button";
 import { useTheme } from "next-themes";
 import "@blocknote/mantine/style.css";
 import Send from "./send";
 import FormattingToolbarControllerCustom from "./custom/FormattingToolbarController";
 import useChat from "../../hooks/useChat";
 import { usePathname } from "next/navigation";
-
-const noImplement = ["Audio", "Video", "Image", "File"];
-
-const getCustomSlashMenuItems = (
-  editor: BlockNoteEditor
-): DefaultReactSuggestionItem[] => [
-  ...getDefaultReactSlashMenuItems(editor).filter(
-    (menuItem) => !noImplement.includes(menuItem.title)
-  ),
-];
+import SideMenuCustom from "./custom/SideMenu";
 
 const TextInput = () => {
   const locale = locales.en;
@@ -159,28 +140,11 @@ const TextInput = () => {
       >
         <SuggestionMenuControllerCustom
           triggerCharacter={"/"}
-          getItems={async (query) =>
-            filterSuggestionItems(getCustomSlashMenuItems(editor), query)
-          }
           onUpdate={handleUpdate}
           show={show}
         />
         <FormattingToolbarControllerCustom />
-        <SideMenuController
-          sideMenu={(props) => (
-            <SideMenu {...props}>
-              <RemoveBlockButton {...props} />
-              <DragHandleButton
-                {...props}
-                dragHandleMenu={(props) => (
-                  <DragHandleMenu {...props}>
-                    <RemoveBlockItem {...props}>Delete</RemoveBlockItem>
-                  </DragHandleMenu>
-                )}
-              />
-            </SideMenu>
-          )}
-        />
+        <SideMenuController sideMenu={SideMenuCustom} />
       </BlockNoteView>
 
       <Send ref={sendRef} onClick={handleSend} />
