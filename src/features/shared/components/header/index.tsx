@@ -2,20 +2,12 @@
 import { WandSparkles } from "lucide-react";
 import { Button } from "@/features/shared/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/features/shared/components/ui/select";
-import {
   SidebarTrigger,
   useSidebar,
 } from "@/features/shared/components/ui/sidebar";
 import Link from "next/link";
 import UserActionButton from "@/features/auth/components/user-action-button";
+import SelectModel from "@/features/chat-interface/components/select-model";
 
 const Header = () => {
   const stateSidebar = useSidebar();
@@ -36,20 +28,7 @@ const Header = () => {
           </>
         )}
         <div className="relative">
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select your AI" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Select model</SelectLabel>
-                <SelectItem value="apple">Agent</SelectItem>
-                <SelectItem value="banana">Gemini</SelectItem>
-                <SelectItem value="bananax">OpenAi</SelectItem>
-                <SelectItem value="bananaxx">Fast</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <SelectModel />
         </div>
       </div>
       <UserActionButton />
