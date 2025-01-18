@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/features/shared/components/ui/select";
 import useModels from "../../hooks/useModels";
-import React, { useState } from "react";
+import { usePreference } from "@/features/shared/providers/preference-provider";
 
 interface Model {
   company: string;
@@ -19,10 +19,11 @@ interface Model {
 
 const SelectModel = () => {
   const { data: models, isPending, isError, error } = useModels();
-  const [selectedModel, setSelectedModel] = useState<string>("");
+  const currentModel = usePreference((state) => state.currentModel);
+  const setModel = usePreference((state) => state.setModel);
 
   const handleValueChange = (value: string) => {
-    setSelectedModel(value);
+    setModel(value);
   };
 
   if (isError) {
@@ -33,7 +34,7 @@ const SelectModel = () => {
     return (
       <Select>
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select your AI" />
+          <SelectValue placeholder={currentModel} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
@@ -45,9 +46,9 @@ const SelectModel = () => {
   }
 
   return (
-    <Select value={selectedModel} onValueChange={handleValueChange}>
+    <Select value={currentModel} onValueChange={handleValueChange}>
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select your AI" />
+        <SelectValue placeholder={currentModel} />
       </SelectTrigger>
       <SelectContent>
         {models?.map((model: Model, i: number) => (

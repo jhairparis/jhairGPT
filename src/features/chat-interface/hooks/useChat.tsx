@@ -1,6 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { usePreference } from "@/features/shared/providers/preference-provider";
 import {
   chatting,
   getChat,
@@ -8,7 +9,7 @@ import {
   initializeChat,
 } from "../utils/service-chat";
 
-type c = { message: string; model: string };
+type c = { message: string };
 
 export const chatKeys = {
   all: () => ["chats"],
@@ -20,6 +21,7 @@ function useChat() {
   const pathname = usePathname();
   const router = useRouter();
   const chatId = pathname.split("/").pop() as string;
+  const currentModel = usePreference((state) => state.currentModel);
 
   const queryClient = useQueryClient();
 
@@ -42,12 +44,12 @@ function useChat() {
 
   const updateChat = useMutation({
     mutationKey: chatKeys.detail(chatId),
-    mutationFn: ({ message, model }: c) => {
+    mutationFn: ({ message }: c) => {
       if (!chatId) {
         router.push("/");
         throw new Error("Required chatId");
       }
-      return chatting(message, chatId, model);
+      return chatting(message, chatId, currentModel);
     },
     onMutate: async (data) => {
       await queryClient.cancelQueries({ queryKey: chatKeys.detail(chatId) });
@@ -75,7 +77,7 @@ function useChat() {
 
   const createChat = useMutation({
     mutationKey: chatKeys.list(),
-    mutationFn: ({ message, model }: c) => initializeChat(message, model),
+    mutationFn: ({ message }: c) => initializeChat(message, currentModel),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: chatKeys.list() });
       const previousData: any = queryClient.getQueryData(chatKeys.list());

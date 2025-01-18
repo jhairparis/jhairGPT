@@ -26,12 +26,14 @@ const TextInput = () => {
       },
     },
   });
-  const { resolvedTheme } = useTheme();
-  const pathname = usePathname();
-  const chatId = pathname.split("/").pop() as string;
-  const [show, setShow] = useState(false);
-  const sendRef = useRef<any>(null);
+
   const { updateChat, createChat } = useChat();
+  const [show, setShow] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const sendRef = useRef<any>(null);
+  const pathname = usePathname();
+
+  const chatId = pathname.split("/").pop() as string;
 
   const handleUpdate = useCallback((state: SuggestionMenuState) => {
     setShow(state.show);
@@ -97,7 +99,7 @@ const TextInput = () => {
 
     if (!chatId) {
       createChat.mutate(
-        { message: markdown, model: "gemini-1.5-flash" },
+        { message: markdown },
         {
           onSuccess: clearEditorBlocks,
         }
@@ -106,7 +108,7 @@ const TextInput = () => {
     }
 
     updateChat.mutate(
-      { message: markdown, model: "gemini-1.5-flash" },
+      { message: markdown },
       {
         onSuccess: clearEditorBlocks,
       }
