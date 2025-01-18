@@ -7,10 +7,10 @@ type PreferenceStoreState = { currentModel: string };
 
 type PreferencesStoreActions = {
   setModel: (
-    nextAge:
+    nextModel:
       | PreferenceStoreState["currentModel"]
       | ((
-          currentAge: PreferenceStoreState["currentModel"]
+          currentModel: PreferenceStoreState["currentModel"]
         ) => PreferenceStoreState["currentModel"])
   ) => void;
 };
@@ -29,12 +29,12 @@ export const PreferenceProvider = ({ children }: any) => {
       persist<PreferencesStore>(
         (set) => ({
           currentModel: "Select your AI",
-          setModel: (nextAge) =>
+          setModel: (nextModel) =>
             set((state) => ({
               currentModel:
-                typeof nextAge === "function"
-                  ? nextAge(state.currentModel)
-                  : nextAge,
+                typeof nextModel === "function"
+                  ? nextModel(state.currentModel)
+                  : nextModel,
             })),
         }),
         { name: "preference-store" }
