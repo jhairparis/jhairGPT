@@ -15,7 +15,7 @@ import {
   useSidebar,
 } from "@/features/shared/components/ui/sidebar";
 import Link from "next/link";
-import ButtonAuth from "@/features/auth/components/button-auth";
+import UserActionButton from "@/features/auth/components/user-action-button";
 
 const Header = () => {
   const stateSidebar = useSidebar();
@@ -52,7 +52,7 @@ const Header = () => {
           </Select>
         </div>
       </div>
-      <ButtonAuth />
+      <UserActionButton />
     </header>
   );
 };
