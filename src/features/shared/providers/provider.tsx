@@ -1,8 +1,7 @@
-import { ChatProvider } from "@/features/chat-interface/providers/chat";
 import { ThemeProvider } from "./theme-provider";
 import { SidebarProvider } from "@/features/shared/components/ui/sidebar";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import queryClient from "@/features/shared/lib/queryClient";
 
 const Provider = ({ children }: any) => {
@@ -14,9 +13,7 @@ const Provider = ({ children }: any) => {
         enableSystem
         disableTransitionOnChange
       >
-        <SidebarProvider defaultOpen={false}>
-          <ChatProvider>{children}</ChatProvider>
-        </SidebarProvider>
+        <SidebarProvider defaultOpen={false}>{children}</SidebarProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

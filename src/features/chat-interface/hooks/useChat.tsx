@@ -32,6 +32,12 @@ function useChat() {
   const chatsQuery = useQuery({
     queryKey: chatKeys.list(),
     queryFn: getChats,
+    retry: (failureCount, error) => {
+      if (error instanceof Error && error.message === "Error 401: Unauthorized")
+        return false;
+
+      return failureCount < 3;
+    },
   });
 
   const updateChat = useMutation({

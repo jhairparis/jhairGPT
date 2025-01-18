@@ -1,7 +1,6 @@
 import fetchApi from "@/features/shared/lib/fetchApi";
 
 export const getChat = async (chatId: string) => {
-  console.log(chatId, "chatId");
   const { data } = await fetchApi.get<any>(`/gpt/chat/${chatId}`, {
     next: { revalidate: 60 },
   });
