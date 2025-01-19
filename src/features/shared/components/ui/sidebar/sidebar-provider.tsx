@@ -2,11 +2,11 @@
 import React from "react";
 import { useIsMobile } from "@/features/shared/hooks/use-mobile";
 import { TooltipProvider } from "@/features/shared/components/ui/tooltip";
+import { cn } from "@/features/shared/lib/utils";
 import {
-  cn,
-  SIDEBAR_COOKIE_NAME,
   SIDEBAR_COOKIE_MAX_AGE,
-} from "@/features/shared/lib/utils";
+  SIDEBAR_COOKIE_NAME,
+} from "@/features/shared/constants/sidebar";
 
 export type SidebarContextType = {
   state: "expanded" | "collapsed";

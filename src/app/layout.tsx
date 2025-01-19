@@ -7,7 +7,7 @@ import AppSidebar from "@/features/shared/components/sidebar";
 import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
 import SidebarProvider  from "@/features/shared/components/ui/sidebar/sidebar-provider";
-import { SIDEBAR_COOKIE_NAME } from "@/features/shared/lib/utils";
+import { SIDEBAR_COOKIE_NAME } from "@/features/shared/constants/sidebar";
 
 const TextInput = dynamic(
   () => import("@/features/chat-interface/components/text-input"),
