@@ -1,7 +1,7 @@
 "use client";
 import { X, WandSparkles } from "lucide-react";
 import { Button } from "@/features/shared/components/ui/button";
-import History from "./history";
+import History from "../history";
 import {
   Sidebar,
   SidebarContent,
@@ -37,7 +37,7 @@ const AppSidebar = () => {
           </Button>
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="gap-0">
         <History />
       </SidebarContent>
       <SidebarFooter>
