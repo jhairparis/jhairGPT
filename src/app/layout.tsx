@@ -40,7 +40,7 @@ export default function RootLayout({
                 <Header />
                 <div className="flex-1 flex flex-col overflow-hidden">
                   {children}
-                  <footer className="flex-none w-full min-w-80 max-w-4xl mx-auto relative">
+                  <footer className="flex-none w-full min-w-80 min-h-20 max-w-4xl mx-auto relative">
                     <TextInput />
                   </footer>
                 </div>

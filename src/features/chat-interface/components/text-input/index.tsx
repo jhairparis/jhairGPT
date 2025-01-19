@@ -130,7 +130,7 @@ const TextInput = () => {
   };
 
   return (
-    <div className="min-h-[74px] max-h-[265px] bg-white dark:bg-[#1f1f1f] border border-b-0 border-gray-500 p-6 overflow-hidden rounded-t-xl">
+    <div className="min-h-[79px] max-h-[265px] bg-white dark:bg-[#1f1f1f] border border-b-0 border-gray-500 p-6 overflow-hidden rounded-t-xl">
       <BlockNoteView
         editor={editor}
         sideMenu={false}
