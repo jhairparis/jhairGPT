@@ -7,6 +7,7 @@ import {
   getChat,
   getChats,
   initializeChat,
+  removeChatById,
 } from "../utils/service-chat";
 
 type c = { message: string };
@@ -39,6 +40,27 @@ function useChat() {
         return false;
 
       return failureCount < 3;
+    },
+  });
+
+  const createChat = useMutation({
+    mutationKey: chatKeys.list(),
+    mutationFn: ({ message }: c) => initializeChat(message, currentModel),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: chatKeys.list() });
+      const previousData: any = queryClient.getQueryData(chatKeys.list());
+
+      queryClient.setQueryData(chatKeys.list(), () => {
+        return [...previousData, { id: "temp", title: "New Chat" }];
+      });
+
+      return { previousData };
+    },
+    onSuccess: (data) => {
+      router.push(`/c/${data.chatId}`);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: chatKeys.list() });
     },
   });
 
@@ -75,24 +97,22 @@ function useChat() {
     },
   });
 
-  const createChat = useMutation({
+  const deleteChat = useMutation({
     mutationKey: chatKeys.list(),
-    mutationFn: ({ message }: c) => initializeChat(message, currentModel),
+    mutationFn: ({ id }: { id: string }) => removeChatById(id),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: chatKeys.list() });
       const previousData: any = queryClient.getQueryData(chatKeys.list());
 
       queryClient.setQueryData(chatKeys.list(), () => {
-        return [...previousData, { id: "temp", title: "New Chat" }];
+        return previousData.filter((chat: any) => chat.id !== chatId);
       });
 
       return { previousData };
     },
-    onSuccess: (data) => {
-      router.push(`/c/${data.chatId}`);
-    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: chatKeys.list() });
+      if (pathname === `/c/${chatId}`) router.push("/");
     },
   });
 
@@ -101,6 +121,7 @@ function useChat() {
     chatsQuery,
     createChat,
     updateChat,
+    deleteChat,
   };
 }
 

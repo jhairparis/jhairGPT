@@ -56,8 +56,9 @@ export const chatting = async (
   return data.result;
 };
 
-export const deleteChat = (chatId: string) => {
-  return fetchApi.delete(`/gpt/chat/${chatId}`, {
+export const removeChatById = async (chatId: string) => {
+  const { data } = await fetchApi.delete<any>(`/gpt/chat/${chatId}`, {
     credentials: "include",
   });
+  return data.result;
 };
