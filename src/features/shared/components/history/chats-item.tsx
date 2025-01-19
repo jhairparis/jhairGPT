@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { LineChart, MoreHorizontal, Pen, Trash2 } from "lucide-react";
-import { SidebarMenuItem, SidebarMenuButton, SidebarMenuAction } from "../ui/sidebar";
+import {
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarMenuAction,
+} from "../ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,10 +16,10 @@ import {
 interface ChatsItemProps {
   chat: any;
   isActive: boolean;
-  onDelete: (id: string) => void;
+  onDelete: () => void;
 }
 
-export const ChatsItem = ({ chat, isActive, onDelete }: ChatsItemProps) => {
+export const ChatsItem = ({ chat, onDelete, isActive }: ChatsItemProps) => {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive}>
@@ -36,7 +40,7 @@ export const ChatsItem = ({ chat, isActive, onDelete }: ChatsItemProps) => {
               <Pen />
               <span>Rename</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete(chat.id)}>
+            <DropdownMenuItem onClick={onDelete}>
               <Trash2 />
               <span>Delete chat</span>
             </DropdownMenuItem>

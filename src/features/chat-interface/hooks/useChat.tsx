@@ -51,13 +51,22 @@ function useChat() {
       const previousData: any = queryClient.getQueryData(chatKeys.list());
 
       queryClient.setQueryData(chatKeys.list(), () => {
-        return [...previousData, { id: "temp", title: "New Chat" }];
+        return {
+          ...previousData,
+          today: previousData["today"].concat({
+            id: "temp",
+            title: "New Chat",
+          }),
+        };
       });
 
       return { previousData };
     },
     onSuccess: (data) => {
       router.push(`/c/${data.chatId}`);
+    },
+    onError: (e) => {
+      console.log(e, "hey");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: chatKeys.list() });
@@ -99,20 +108,30 @@ function useChat() {
 
   const deleteChat = useMutation({
     mutationKey: chatKeys.list(),
-    mutationFn: ({ id }: { id: string }) => removeChatById(id),
-    onMutate: async () => {
+    mutationFn: ({ id }: { id: string; groupKey: string }) =>
+      removeChatById(id),
+    onMutate: async ({ groupKey, id }) => {
       await queryClient.cancelQueries({ queryKey: chatKeys.list() });
       const previousData: any = queryClient.getQueryData(chatKeys.list());
 
       queryClient.setQueryData(chatKeys.list(), () => {
-        return previousData.filter((chat: any) => chat.id !== chatId);
+        return {
+          ...previousData,
+          [groupKey]: previousData[groupKey].filter(
+            (chat: any) => chat.id !== id
+          ),
+        };
       });
 
       return { previousData };
     },
-    onSettled: () => {
+    onError: (e) => {
+      console.log(e, "hey");
+    },
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: chatKeys.list() });
-      if (pathname === `/c/${chatId}`) router.push("/");
+      queryClient.invalidateQueries({ queryKey: chatKeys.detail(id) });
+      if (pathname === `/c/${id}`) router.push("/");
     },
   });
 

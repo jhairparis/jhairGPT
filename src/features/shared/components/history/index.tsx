@@ -1,13 +1,11 @@
 "use client";
-import { usePathname } from "next/navigation";
 import useChat from "@/features/chat-interface/hooks/useChat";
 import { ChatsLoading } from "./chats-loading";
 import { ChatsError } from "./chats-error";
 import { ChatsGroup } from "./chats-group";
 
 const History = () => {
-  const pathname = usePathname();
-  const { chatsQuery, deleteChat } = useChat();
+  const { chatsQuery } = useChat();
   const { isPending, isError, data, error } = chatsQuery;
 
   if (isPending) return <ChatsLoading />;
@@ -20,8 +18,6 @@ const History = () => {
           key={key}
           groupKey={key}
           chats={data[key]}
-          currentPath={pathname}
-          onDeleteChat={(id) => deleteChat.mutate({ id })}
         />
       ))}
     </>

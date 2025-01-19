@@ -1,17 +1,29 @@
 import { ChevronDown } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
-import { SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu } from "../ui/sidebar";
+import { usePathname } from "next/navigation";
+import useChat from "@/features/chat-interface/hooks/useChat";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@radix-ui/react-collapsible";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+} from "../ui/sidebar";
 import { ChatsItem } from "./chats-item";
 import { DATE_GROUP_LABELS } from "../../constants/date-groups";
 
 interface ChatGroupProps {
   groupKey: string;
   chats: any[];
-  currentPath: string;
-  onDeleteChat: (id: string) => void;
 }
 
-export const ChatsGroup = ({ groupKey, chats, currentPath, onDeleteChat }: ChatGroupProps) => {
+export const ChatsGroup = ({ groupKey, chats }: ChatGroupProps) => {
+  const pathname = usePathname();
+  const { deleteChat } = useChat();
+
   if (chats.length === 0) return null;
 
   return (
@@ -31,8 +43,8 @@ export const ChatsGroup = ({ groupKey, chats, currentPath, onDeleteChat }: ChatG
                 <ChatsItem
                   key={chat.id}
                   chat={chat}
-                  isActive={currentPath === `/c/${chat.id}`}
-                  onDelete={onDeleteChat}
+                  isActive={pathname === `/c/${chat.id}`}
+                  onDelete={() => deleteChat.mutate({ id: chat.id, groupKey })}
                 />
               ))}
             </SidebarMenu>
