@@ -1,5 +1,4 @@
 import { ThemeProvider } from "./theme-provider";
-import { SidebarProvider } from "@/features/shared/components/ui/sidebar";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import queryClient from "@/features/shared/lib/queryClient";
@@ -15,7 +14,7 @@ const Provider = ({ children }: any) => {
           enableSystem
           disableTransitionOnChange
         >
-          <SidebarProvider defaultOpen={false}>{children}</SidebarProvider>
+          {children}
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </PreferenceProvider>
