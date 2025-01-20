@@ -4,15 +4,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Header from "@/features/shared/components/header";
 import AppSidebar from "@/features/shared/components/sidebar";
-import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
-import SidebarProvider  from "@/features/shared/components/ui/sidebar/sidebar-provider";
+import SidebarProvider from "@/features/shared/components/ui/sidebar/sidebar-provider";
 import { SIDEBAR_COOKIE_NAME } from "@/features/shared/constants/sidebar";
-
-const TextInput = dynamic(
-  () => import("@/features/chat-interface/components/text-input"),
-  { ssr: false }
-);
+import { TextInput } from "@/features/chat-interface/components/text-input";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -21,13 +16,13 @@ export const metadata: Metadata = {
   description: "The unique project",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+type RootLayoutProps = Readonly<{
   children: React.ReactNode;
-}>) {
+}>;
+
+export default function RootLayout({ children }: RootLayoutProps) {
   const cookieStore = cookies();
-  const defaultOpen = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === "true"
+  const defaultOpen = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === "true";
 
   return (
     <html lang="en">

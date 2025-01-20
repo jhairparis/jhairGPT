@@ -3,7 +3,7 @@ import React, { forwardRef, useImperativeHandle } from "react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 interface AppProps {
-	onClick: () => void;
+  onClick: () => void;
 }
 
 // eslint-disable-next-line react/display-name
@@ -39,7 +39,10 @@ const App = forwardRef((props: AppProps, ref) => {
   }));
 
   return (
-    <div className="absolute bottom-0 right-0 w-12 h-12 mr-4 mb-2" onClick={props.onClick}>
+    <div
+      className="absolute bottom-0 right-0 w-12 h-12 mr-4 mb-2 cursor-pointer"
+      onClick={props.onClick}
+    >
       <DotLottieReact
         src="/Send.lottie"
         segment={[10, 140]}

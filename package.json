@@ -9,11 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@blocknote/core": "^0.20.0",
-    "@blocknote/mantine": "^0.20.0",
-    "@blocknote/react": "^0.20.0",
-    "@blocknote/server-util": "^0.20.0",
-    "@lottiefiles/dotlottie-react": "^0.11.0",
+    "@blocknote/core": "^0.22.0",
+    "@blocknote/mantine": "^0.22.0",
+    "@blocknote/react": "^0.22.0",
+    "@blocknote/server-util": "^0.22.0",
+    "@lottiefiles/dotlottie-react": "^0.12.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-collapsible": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",

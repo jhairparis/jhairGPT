@@ -1,12 +1,4 @@
-"use client";
-import dynamic from "next/dynamic";
-
-const appName = "XX";
-
-const TextInput = dynamic(
-  () => import("@/features/chat-interface/components/text-input"),
-  { ssr: false }
-);
+const appName = "JhairGPT";
 
 const Page = () => {
   return (
