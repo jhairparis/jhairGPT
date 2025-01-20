@@ -1,9 +1,7 @@
+"use client";
 import { BotMessageSquare } from "lucide-react";
 import { process } from "@/features/chat-interface/utils/general";
-import dynamic from "next/dynamic";
-import ActionsButtons from "./ActionsButtons";
-
-const RenderMarkdown = dynamic(() => import("../render"), { ssr: false });
+import { RenderMarkdown } from "../render";
 
 type BubbleProps = {
   content: string;
