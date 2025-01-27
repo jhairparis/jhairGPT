@@ -1,4 +1,5 @@
 import { Play, User } from "lucide-react";
+import Render from "../render";
 import { process } from "@/features/chat-interface/utils/general";
 
 type BubbleProps = {
@@ -8,10 +9,10 @@ const BubbleUser = ({ content }: BubbleProps) => {
   const processedContent = process(content);
 
   return (
-    <li className="max-w-2xl ms-auto flex justify-end gap-x-2 sm:gap-x-4">
-      <div className="grow text-end space-y-3">
-        <div className="inline-block bg-blue-600 rounded-lg p-4 shadow-sm">
-          <p className="text-sm text-white">{processedContent}</p>
+    <li className="w-full ms-auto flex justify-end gap-x-2 sm:gap-x-4">
+      <div className="grow text-end space-y-3 w-full">
+        <div className="inline-block max-w-full sm:max-w-[80%] md:max-w-2xl bg-blue-600 rounded-lg p-4 shadow-sm">
+          <Render content={processedContent} />
           {/* <div className="mt-3">
             <button
               type="button"
@@ -24,7 +25,7 @@ const BubbleUser = ({ content }: BubbleProps) => {
         </div>
       </div>
 
-      <span className="shrink-0 inline-flex items-center justify-center size-[38px] rounded-full bg-gray-600">
+      <span className="shrink-0 hidden sm:inline-flex items-center justify-center size-[38px] rounded-full bg-gray-600">
         <User />
       </span>
     </li>
