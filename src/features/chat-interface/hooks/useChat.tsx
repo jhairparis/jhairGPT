@@ -8,7 +8,7 @@ import {
   getChats,
   initializeChat,
   removeChatById,
-} from "../utils/service-chat";
+} from "@/features/chat-interface/utils/service-chat";
 
 type c = { message: string };
 
