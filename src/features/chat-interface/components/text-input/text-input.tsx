@@ -13,9 +13,39 @@ import FormattingToolbarControllerCustom from "./custom/FormattingToolbarControl
 import useChat from "../../hooks/useChat";
 import { usePathname } from "next/navigation";
 import SideMenuCustom from "./custom/SideMenu";
+import uploadFile from "../../utils/uploadFiles";
+
+type Attached = {
+  file: File;
+  id: string;
+  url: string;
+};
 
 const TextInput = () => {
   const locale = locales.en;
+  const [attached, setAttached] = useState<Attached[]>([]);
+
+  const Fake = async (file: File, blockId?: string) =>
+    new Promise<Record<string, any>>((resolve) => {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const newUrl = e.target?.result as string;
+        const unique_id = crypto.randomUUID();
+
+        setAttached((prev) => [...prev, { file, id: unique_id, url: newUrl }]);
+
+        resolve({
+          props: {
+            name: unique_id,
+            url: newUrl,
+            textAlignment: "center",
+          },
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
   const editor = useCreateBlockNote({
     dictionary: {
       ...locale,
@@ -25,6 +55,7 @@ const TextInput = () => {
         heading: "Title",
       },
     },
+    uploadFile: Fake,
   });
 
   const { updateChat, createChat } = useChat();
@@ -93,26 +124,50 @@ const TextInput = () => {
 
   const handleSend = async () => {
     sendRef.current?.play();
-    const markdown = await editor.blocksToMarkdownLossy(editor.document);
+    let markdown = await editor.blocksToMarkdownLossy(editor.document);
     const clearEditorBlocks = () =>
       editor.removeBlocks([...editor.document.map((block) => block.id)]);
 
-    if (!chatId) {
-      createChat.mutate(
-        { message: markdown },
-        {
-          onSuccess: clearEditorBlocks,
-        }
+    if (attached.length > 0) {
+      const res = await Promise.all(
+        attached.map((attachment) =>
+          uploadFile(
+            attachment.file,
+            `${attachment.id}.${attachment.file.name.split(".").pop()}`,
+            chatId
+          )
+        )
       );
+
+      for (let i = 0; i < attached.length; i++) {
+        const newUrl = res[i];
+        const file = attached[i];
+
+        markdown = markdown.replace(file.url, newUrl);
+      }
+
+      // setAttached([]);
+      // clearEditorBlocks();
+    }
+
+    console.log(markdown);
+
+    if (!chatId) {
+      // createChat.mutate(
+      //   { message: markdown },
+      //   {
+      //     onSuccess: clearEditorBlocks,
+      //   }
+      // );
       return;
     }
 
-    updateChat.mutate(
-      { message: markdown },
-      {
-        onSuccess: clearEditorBlocks,
-      }
-    );
+    // updateChat.mutate(
+    //   { message: markdown },
+    //   {
+    //     onSuccess: clearEditorBlocks,
+    //   }
+    // );
   };
 
   const shortcuts = async (event: KeyboardEvent<HTMLDivElement>) => {
@@ -127,6 +182,14 @@ const TextInput = () => {
         manageTextInsertion();
       }
     }
+  };
+
+  const deleteAttached = useCallback(({ props }: any) => {
+    setAttached((prev) => prev.filter((element) => element.id !== props.name));
+  }, []);
+
+  const SideMenuWrapper = (props: any) => {
+    return <SideMenuCustom {...props} attached={deleteAttached} />;
   };
 
   return (
@@ -146,7 +209,7 @@ const TextInput = () => {
           show={show}
         />
         <FormattingToolbarControllerCustom />
-        <SideMenuController sideMenu={SideMenuCustom} />
+        <SideMenuController sideMenu={SideMenuWrapper} />
       </BlockNoteView>
 
       <Send ref={sendRef} onClick={handleSend} />

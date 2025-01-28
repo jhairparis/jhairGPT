@@ -222,7 +222,7 @@ export function SuggestionMenuControllerCustom<
   }, [editor, onItemClick]);
 
   const getItemsOrDefault = useMemo(() => {
-    const noImplement = ["Audio", "Video", "Image", "File"];
+    const noImplement = ["Audio", "Video", "File"];
 
     return (
       getItems ||
