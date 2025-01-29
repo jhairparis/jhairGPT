@@ -1,4 +1,5 @@
 import fetchApi from "@/features/shared/lib/fetchApi";
+import type { PreferenceStoreState } from "@/features/shared/providers/preference-provider";
 
 export const getChat = async (chatId: string) => {
   const { data } = await fetchApi.get<any>(`/gpt/chat/${chatId}`, {
@@ -16,7 +17,10 @@ export const getChats = async () => {
   return data.result;
 };
 
-export const initializeChat = async (message: string, model: string) => {
+export const initializeChat = async (
+  message: string,
+  model: PreferenceStoreState["currentModel"]
+) => {
   const sendData = {
     message,
     model: model,
@@ -36,7 +40,7 @@ export const initializeChat = async (message: string, model: string) => {
 export const chatting = async (
   message: string,
   chatId: string,
-  model: string
+  model: PreferenceStoreState["currentModel"]
 ) => {
   const sendData = {
     message,

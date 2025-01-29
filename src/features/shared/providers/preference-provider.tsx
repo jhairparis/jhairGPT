@@ -3,7 +3,12 @@ import { createContext, useContext, useRef } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
 import { persist } from "zustand/middleware";
 
-type PreferenceStoreState = { currentModel: string };
+export type PreferenceStoreState = {
+  currentModel: {
+    company: string;
+    model: string;
+  };
+};
 
 type PreferencesStoreActions = {
   setModel: (
@@ -28,7 +33,10 @@ export const PreferenceProvider = ({ children }: any) => {
     storeRef.current = createStore(
       persist<PreferencesStore>(
         (set) => ({
-          currentModel: "Select your AI",
+          currentModel: {
+            company: "default",
+            model: "Select your AI",
+          },
           setModel: (nextModel) =>
             set((state) => ({
               currentModel:

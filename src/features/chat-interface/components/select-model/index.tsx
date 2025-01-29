@@ -23,7 +23,8 @@ const SelectModel = () => {
   const setModel = usePreference((state) => state.setModel);
 
   const handleValueChange = (value: string) => {
-    setModel(value);
+    const parsed = JSON.parse(value);
+    setModel(parsed);
   };
 
   if (isError) {
@@ -34,10 +35,11 @@ const SelectModel = () => {
     return (
       <Select>
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder={currentModel} />
+          <SelectValue placeholder={currentModel.model} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
+            <SelectLabel>Loading...</SelectLabel>
             <SelectItem value="undefined">Loading models...</SelectItem>
           </SelectGroup>
         </SelectContent>
@@ -46,16 +48,29 @@ const SelectModel = () => {
   }
 
   return (
-    <Select value={currentModel} onValueChange={handleValueChange}>
+    <Select
+      value={
+        currentModel.company === "default"
+          ? undefined
+          : JSON.stringify(currentModel)
+      }
+      onValueChange={handleValueChange}
+    >
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder={currentModel} />
+        <SelectValue placeholder={currentModel.model} />
       </SelectTrigger>
       <SelectContent>
         {models?.map((model: Model, i: number) => (
           <SelectGroup key={i}>
             <SelectLabel>{model.company}</SelectLabel>
             {model.available.map((available: string, j: number) => (
-              <SelectItem value={available} key={`${i}-${j}`}>
+              <SelectItem
+                value={JSON.stringify({
+                  company: model.company,
+                  model: available,
+                })}
+                key={`${i}-${j}`}
+              >
                 {available}
               </SelectItem>
             ))}
