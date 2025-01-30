@@ -4,7 +4,10 @@ import { process } from "@/features/chat-interface/utils/general";
 import RenderMarkdown from "../render";
 
 type BubbleProps = {
-  content: string;
+  content:  {
+    type: string;
+    text: string;
+  }[];
   children: React.ReactNode;
 };
 

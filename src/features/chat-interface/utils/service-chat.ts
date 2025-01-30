@@ -1,8 +1,19 @@
 import fetchApi from "@/features/shared/lib/fetchApi";
 import type { PreferenceStoreState } from "@/features/shared/providers/preference-provider";
+import { MarkdownItem } from "../components/text-input/text-input";
 
 export const getChat = async (chatId: string) => {
-  const { data } = await fetchApi.get<any>(`/gpt/chat/${chatId}`, {
+  const { data } = await fetchApi.get<{
+    result: {
+      history: {
+        role: string;
+        content: {
+          type: string;
+          text: string;
+        }[];
+      }[];
+    };
+  }>(`/gpt/chat/${chatId}`, {
     next: { revalidate: 60 },
   });
 
@@ -18,7 +29,7 @@ export const getChats = async () => {
 };
 
 export const initializeChat = async (
-  message: string,
+  message: MarkdownItem[],
   model: PreferenceStoreState["currentModel"]
 ) => {
   const sendData = {
@@ -28,6 +39,7 @@ export const initializeChat = async (
 
   const { data } = await fetchApi.post<any>(`/gpt`, sendData, {
     credentials: "include",
+    timeout: 20000,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -38,7 +50,7 @@ export const initializeChat = async (
 };
 
 export const chatting = async (
-  message: string,
+  message: MarkdownItem[],
   chatId: string,
   model: PreferenceStoreState["currentModel"]
 ) => {
@@ -54,6 +66,7 @@ export const chatting = async (
       Accept: "application/json",
       "Content-Type": "application/json",
     },
+    timeout: 20000,
     next: { revalidate: 120 },
   });
 

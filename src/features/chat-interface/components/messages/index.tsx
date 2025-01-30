@@ -25,7 +25,7 @@ const Messages = () => {
   return (
     <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto">
       <ul className="mt-5 text-white">
-        {data.history?.map(({ role, content }: any, index: number) =>
+        {data.history?.map(({ role, content }, index) =>
           role === "user" ? (
             <UserBubble key={index + role} content={content} />
           ) : (

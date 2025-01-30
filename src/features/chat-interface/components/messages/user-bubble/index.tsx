@@ -3,7 +3,10 @@ import Render from "../render";
 import { process } from "@/features/chat-interface/utils/general";
 
 type BubbleProps = {
-  content: string;
+  content: {
+    type: string;
+    text: string;
+  }[];
 };
 const BubbleUser = ({ content }: BubbleProps) => {
   const processedContent = process(content);

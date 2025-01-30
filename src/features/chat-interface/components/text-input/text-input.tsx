@@ -14,11 +14,17 @@ import useChat from "../../hooks/useChat";
 import { usePathname } from "next/navigation";
 import SideMenuCustom from "./custom/SideMenu";
 import uploadFile from "../../utils/uploadFiles";
+import { splitMarkdown } from "../../utils/general";
 
 type Attached = {
   file: File;
   id: string;
   url: string;
+};
+export type MarkdownItem = {
+  type: string;
+  text: string;
+  image?: string;
 };
 
 const TextInput = () => {
@@ -124,11 +130,25 @@ const TextInput = () => {
 
   const handleSend = async () => {
     sendRef.current?.play();
-    let markdown = await editor.blocksToMarkdownLossy(editor.document);
+
+    const { markdown, countImgLinks, attachedIndex } = splitMarkdown(
+      await editor.blocksToMarkdownLossy(editor.document)
+    ) as {
+      markdown: MarkdownItem[];
+      countImgLinks: number;
+      attachedIndex: number[];
+    };
     const clearEditorBlocks = () =>
       editor.removeBlocks([...editor.document.map((block) => block.id)]);
 
-    if (attached.length > 0) {
+    if (
+      attached.length > 0 &&
+      countImgLinks === attached.length &&
+      attached.length === attachedIndex.length
+    ) {
+      console.log("All files are uploaded");
+
+      //TODO: what if error in one file or all files
       const res = await Promise.all(
         attached.map((attachment) =>
           uploadFile(
@@ -142,32 +162,36 @@ const TextInput = () => {
       for (let i = 0; i < attached.length; i++) {
         const newUrl = res[i];
         const file = attached[i];
+        const index = attachedIndex[i];
 
-        markdown = markdown.replace(file.url, newUrl);
+        markdown[index].text = markdown[index].text
+          .replace(file.url, newUrl)
+          .replace(file.id, file.file.name);
+        markdown[index].image = newUrl;
       }
 
-      // setAttached([]);
-      // clearEditorBlocks();
+      setAttached([]);
+      clearEditorBlocks();
     }
 
-    console.log(markdown);
+    console.log("ready to send", markdown);
 
     if (!chatId) {
-      // createChat.mutate(
-      //   { message: markdown },
-      //   {
-      //     onSuccess: clearEditorBlocks,
-      //   }
-      // );
+      createChat.mutate(
+        { message: markdown },
+        {
+          onSuccess: clearEditorBlocks,
+        }
+      );
       return;
     }
 
-    // updateChat.mutate(
-    //   { message: markdown },
-    //   {
-    //     onSuccess: clearEditorBlocks,
-    //   }
-    // );
+    updateChat.mutate(
+      { message: markdown },
+      {
+        onSuccess: clearEditorBlocks,
+      }
+    );
   };
 
   const shortcuts = async (event: KeyboardEvent<HTMLDivElement>) => {

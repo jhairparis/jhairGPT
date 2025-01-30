@@ -9,8 +9,9 @@ import {
   initializeChat,
   removeChatById,
 } from "@/features/chat-interface/utils/service-chat";
+import { MarkdownItem } from "../components/text-input/text-input";
 
-type c = { message: string };
+type c = { message: MarkdownItem[] };
 
 export const chatKeys = {
   all: () => ["chats"],
@@ -92,7 +93,7 @@ function useChat() {
         ...previousData,
         history: previousData.history.concat({
           role: "user",
-          content: [{ type: "text", text: data.message }],
+          content: data.message,
         }),
       });
 
