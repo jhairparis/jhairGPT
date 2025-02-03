@@ -11,7 +11,7 @@ import {
 } from "@/features/chat-interface/utils/service-chat";
 import { MarkdownItem } from "../components/text-input/text-input";
 
-type c = { message: MarkdownItem[] };
+type c = { message: MarkdownItem[]; chatId_?: string };
 
 export const chatKeys = {
   all: () => ["chats"],
@@ -51,15 +51,16 @@ function useChat() {
       await queryClient.cancelQueries({ queryKey: chatKeys.list() });
       const previousData: any = queryClient.getQueryData(chatKeys.list());
 
-      queryClient.setQueryData(chatKeys.list(), () => {
-        return {
-          ...previousData,
-          today: previousData["today"].concat({
-            id: "temp",
-            title: "New Chat",
-          }),
-        };
-      });
+      if (previousData)
+        queryClient.setQueryData(chatKeys.list(), () => {
+          return {
+            ...previousData,
+            today: previousData["today"].concat({
+              id: "temp",
+              title: "New Chat",
+            }),
+          };
+        });
 
       return { previousData };
     },
@@ -76,12 +77,15 @@ function useChat() {
 
   const updateChat = useMutation({
     mutationKey: chatKeys.detail(chatId),
-    mutationFn: ({ message }: c) => {
-      if (!chatId) {
+    mutationFn: ({ message, chatId_ }: c) => {
+      if (!chatId && !chatId_) {
         router.push("/");
         throw new Error("Required chatId");
       }
-      return chatting(message, chatId, currentModel);
+
+      const realChatId = (chatId || chatId_) as string;
+
+      return chatting(message, realChatId, currentModel);
     },
     onMutate: async (data) => {
       await queryClient.cancelQueries({ queryKey: chatKeys.detail(chatId) });
@@ -89,15 +93,17 @@ function useChat() {
         chatKeys.detail(chatId)
       );
 
-      queryClient.setQueryData(chatKeys.detail(chatId), {
-        ...previousData,
-        history: previousData.history.concat({
-          role: "user",
-          content: data.message,
-        }),
-      });
+      if (previousData) {
+        queryClient.setQueryData(chatKeys.detail(chatId), {
+          ...previousData,
+          history: previousData.history.concat({
+            role: "user",
+            content: data.message,
+          }),
+        });
 
-      return { previousData };
+        return { previousData };
+      }
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(chatKeys.detail(chatId), context?.previousData);

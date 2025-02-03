@@ -10,19 +10,17 @@ type Param = {
   name: string;
   type: string;
   size: number;
-  chatId: string;
 };
 
 type GetPresignedPost = (param: Param) => Promise<PresignedPost>;
 
 const getPresignedPost: GetPresignedPost = async (param) => {
-  const { name, type, size, chatId } = param;
+  const { name, type, size } = param;
 
   const params = new URLSearchParams({
     name,
     type,
     size: size.toString(),
-    subFolder: chatId,
     where: "chat",
   });
 
@@ -40,12 +38,11 @@ const getPresignedPost: GetPresignedPost = async (param) => {
   };
 };
 
-const uploadFile = async (file: File, name: string, chatId: string) => {
+const uploadFile = async (file: File, name: string) => {
   const resPre = await getPresignedPost({
     name: name,
     type: file.type,
     size: file.size,
-    chatId: chatId,
   });
 
   if (!resPre) return Promise.reject("Error in upload file");

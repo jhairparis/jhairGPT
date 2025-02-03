@@ -16,11 +16,6 @@ import SideMenuCustom from "./custom/SideMenu";
 import uploadFile from "../../utils/uploadFiles";
 import { splitMarkdown } from "../../utils/general";
 
-type Attached = {
-  file: File;
-  id: string;
-  url: string;
-};
 export type MarkdownItem = {
   type: string;
   text: string;
@@ -29,28 +24,6 @@ export type MarkdownItem = {
 
 const TextInput = () => {
   const locale = locales.en;
-  const [attached, setAttached] = useState<Attached[]>([]);
-
-  const Fake = async (file: File, blockId?: string) =>
-    new Promise<Record<string, any>>((resolve) => {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        const newUrl = e.target?.result as string;
-        const unique_id = crypto.randomUUID();
-
-        setAttached((prev) => [...prev, { file, id: unique_id, url: newUrl }]);
-
-        resolve({
-          props: {
-            name: unique_id,
-            url: newUrl,
-            textAlignment: "center",
-          },
-        });
-      };
-      reader.readAsDataURL(file);
-    });
 
   const editor = useCreateBlockNote({
     dictionary: {
@@ -61,7 +34,22 @@ const TextInput = () => {
         heading: "Title",
       },
     },
-    uploadFile: Fake,
+    uploadFile: async (file: File, blockId?: string) => {
+      sendRef.current?.play();
+
+      const unique = crypto.randomUUID();
+      const url = await uploadFile(
+        file,
+        `${unique}.${file.name.split(".").pop()}`
+      );
+
+      return {
+        props: {
+          url: url,
+          name: unique,
+        },
+      };
+    },
   });
 
   const { updateChat, createChat } = useChat();
@@ -129,50 +117,15 @@ const TextInput = () => {
   }
 
   const handleSend = async () => {
-    sendRef.current?.play();
-
-    const { markdown, countImgLinks, attachedIndex } = splitMarkdown(
+    const { markdown, countImgLinks } = splitMarkdown(
       await editor.blocksToMarkdownLossy(editor.document)
     ) as {
       markdown: MarkdownItem[];
       countImgLinks: number;
-      attachedIndex: number[];
     };
+
     const clearEditorBlocks = () =>
       editor.removeBlocks([...editor.document.map((block) => block.id)]);
-
-    if (
-      attached.length > 0 &&
-      countImgLinks === attached.length &&
-      attached.length === attachedIndex.length
-    ) {
-      console.log("All files are uploaded");
-
-      //TODO: what if error in one file or all files
-      const res = await Promise.all(
-        attached.map((attachment) =>
-          uploadFile(
-            attachment.file,
-            `${attachment.id}.${attachment.file.name.split(".").pop()}`,
-            chatId
-          )
-        )
-      );
-
-      for (let i = 0; i < attached.length; i++) {
-        const newUrl = res[i];
-        const file = attached[i];
-        const index = attachedIndex[i];
-
-        markdown[index].text = markdown[index].text
-          .replace(file.url, newUrl)
-          .replace(file.id, file.file.name);
-        markdown[index].image = newUrl;
-      }
-
-      setAttached([]);
-      clearEditorBlocks();
-    }
 
     console.log("ready to send", markdown);
 
@@ -183,15 +136,14 @@ const TextInput = () => {
           onSuccess: clearEditorBlocks,
         }
       );
-      return;
+    } else {
+      updateChat.mutate(
+        { message: markdown },
+        {
+          onSuccess: clearEditorBlocks,
+        }
+      );
     }
-
-    updateChat.mutate(
-      { message: markdown },
-      {
-        onSuccess: clearEditorBlocks,
-      }
-    );
   };
 
   const shortcuts = async (event: KeyboardEvent<HTMLDivElement>) => {
@@ -206,14 +158,6 @@ const TextInput = () => {
         manageTextInsertion();
       }
     }
-  };
-
-  const deleteAttached = useCallback(({ props }: any) => {
-    setAttached((prev) => prev.filter((element) => element.id !== props.name));
-  }, []);
-
-  const SideMenuWrapper = (props: any) => {
-    return <SideMenuCustom {...props} attached={deleteAttached} />;
   };
 
   return (
@@ -233,7 +177,7 @@ const TextInput = () => {
           show={show}
         />
         <FormattingToolbarControllerCustom />
-        <SideMenuController sideMenu={SideMenuWrapper} />
+        <SideMenuController sideMenu={SideMenuCustom} />
       </BlockNoteView>
 
       <Send ref={sendRef} onClick={handleSend} />

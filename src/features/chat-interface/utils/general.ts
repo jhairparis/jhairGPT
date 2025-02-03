@@ -24,7 +24,6 @@ export function splitMarkdown(text: string) {
   const result = [];
   let lastIndex = 0;
   const countImgLinks = (text.match(regexLinksImages) || []).length;
-  const attachedIndex = [];
 
   // Remove code blocks, tables and inline code to avoid false matches
   const processedText = text
@@ -50,11 +49,13 @@ export function splitMarkdown(text: string) {
 
     // Determine if it's an image or link
     const isImage = match[1] !== undefined;
+    const urlMatch = match[0].match(/\((.*?)\)/);
+    const imageUrl = urlMatch ? urlMatch[1] : "";
     result.push({
       type: isImage ? "image" : "file",
       text: match[0],
+      image: imageUrl,
     });
-    attachedIndex.push(result.length - 1);
 
     lastIndex = end;
   }
@@ -70,5 +71,5 @@ export function splitMarkdown(text: string) {
     }
   }
 
-  return { markdown: result, countImgLinks, attachedIndex };
+  return { markdown: result, countImgLinks };
 }

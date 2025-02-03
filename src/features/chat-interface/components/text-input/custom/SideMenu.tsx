@@ -8,7 +8,7 @@ import {
 import { RemoveBlockButton } from "../remove-button";
 import { FC } from "react";
 
-const SideMenuCustom: FC<SideMenuProps<any> & { attached: any }> = (props) => {
+const SideMenuCustom: FC<SideMenuProps<any>> = (props) => {
   return (
     <SideMenu {...props}>
       <RemoveBlockButton {...props} />

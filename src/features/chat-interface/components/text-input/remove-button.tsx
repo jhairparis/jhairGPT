@@ -5,7 +5,7 @@ import {
 } from "@blocknote/react";
 import { MdDelete } from "react-icons/md";
 
-export function RemoveBlockButton(props: SideMenuProps & { attached: any }) {
+export function RemoveBlockButton(props: SideMenuProps) {
   const editor = useBlockNoteEditor();
   const Components = useComponentsContext()!;
 
@@ -15,10 +15,7 @@ export function RemoveBlockButton(props: SideMenuProps & { attached: any }) {
       icon={
         <MdDelete
           size={24}
-          onClick={() => {
-            props.attached(props.block)
-            editor.removeBlocks([props.block]);
-          }}
+          onClick={() => editor.removeBlocks([props.block])}
         />
       }
     />
