@@ -13,8 +13,8 @@ const BubbleUser = ({ content }: BubbleProps) => {
 
   return (
     <li className="w-full ms-auto flex justify-end gap-x-2 sm:gap-x-4">
-      <div className="grow text-end space-y-3 w-full">
-        <div className="inline-block max-w-full sm:max-w-[80%] md:max-w-2xl bg-blue-600 rounded-lg p-4 shadow-sm">
+      <div className="flex justify-end space-y-3 w-full">
+        <div className="inline-block max-w-full sm:max-w-[80%] md:max-w-2xl bg-muted/75 rounded-lg p-4 shadow-sm">
           <Render content={processedContent} />
           {/* <div className="mt-3">
             <button
