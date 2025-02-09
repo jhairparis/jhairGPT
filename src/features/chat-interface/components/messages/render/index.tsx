@@ -14,6 +14,27 @@ import React, { Fragment } from "react";
 import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
 
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; value: string },
+  { hasError: boolean }
+> {
+  value: string;
+  constructor(props: { children: React.ReactNode; value: string }) {
+    super(props);
+    this.state = { hasError: false };
+    this.value = props.value;
+  }
+  static getDerivedStateFromError(_error: any) {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return <Lowlight value={this.value} language="plaintext" markers={[]} />;
+    }
+    return this.props.children;
+  }
+}
+
 Lowlight.registerLanguage("ipynb", Json);
 
 const inlineRule =
@@ -97,7 +118,7 @@ const blockRule = /^(\${1,2})\n((?:\\[^]|[^\\])+?)\n\1(?:\n|$)/;
 
 // TODO: Just load the languages you need
 const renderer: Partial<ReactRenderer> = {
-  code(snippet: any, lang: any) {
+  code(snippet, lang) {
     return (
       <Card
         className="overflow-hidden my-2 text-start"
@@ -105,7 +126,9 @@ const renderer: Partial<ReactRenderer> = {
       >
         <CardHeader className="py-2 px-4 select-none">{lang}</CardHeader>
         <CardContent className="p-0">
-          <Lowlight language={lang} value={snippet} markers={[]} />
+          <ErrorBoundary value={snippet as string}>
+            <Lowlight language={lang} value={snippet as string} markers={[]} />
+          </ErrorBoundary>
         </CardContent>
       </Card>
     );
@@ -156,7 +179,10 @@ const renderer: Partial<ReactRenderer> = {
     children = processChildren(children);
 
     return (
-      <p className="leading-7 [&:not(:first-child)]:mt-6" key={crypto.randomUUID()}>
+      <p
+        className="leading-7 [&:not(:first-child)]:mt-6"
+        key={crypto.randomUUID()}
+      >
         {children.map((child, i) => {
           if (typeof child !== "string") return child;
 
