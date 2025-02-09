@@ -2,18 +2,7 @@ import fetchApi from "@/features/shared/lib/fetchApi";
 import type { PreferenceStoreState } from "@/features/shared/providers/preference-provider";
 import { MarkdownItem } from "../components/text-input/text-input";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
-
-type chatHistory = {
-  result: {
-    history: {
-      role: string;
-      content: {
-        type: string;
-        text: string;
-      }[];
-    }[];
-  };
-};
+import { ChatHistory } from "../types/global";
 
 export const getChatServer = async (
   chatId: string,
@@ -24,7 +13,7 @@ export const getChatServer = async (
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
-  const { data } = await fetchApi.get<chatHistory>(`/gpt/chat/${chatId}`, {
+  const { data } = await fetchApi.get<ChatHistory>(`/gpt/chat/${chatId}`, {
     headers: {
       Cookie: cookieHeader,
     },
@@ -36,7 +25,7 @@ export const getChatServer = async (
 };
 
 export const getChat = async (chatId: string) => {
-  const { data } = await fetchApi.get<chatHistory>(`/gpt/chat/${chatId}`, {
+  const { data } = await fetchApi.get<ChatHistory>(`/gpt/chat/${chatId}`, {
     credentials: "include",
     next: { revalidate: 60 },
   });

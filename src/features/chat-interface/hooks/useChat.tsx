@@ -34,7 +34,7 @@ function useChat() {
       await queryClient.cancelQueries({ queryKey: chatKeys.list() });
       const previousData: any = queryClient.getQueryData(chatKeys.list());
 
-      if (previousData)
+      if (previousData && Object.keys(previousData).length > 0)
         queryClient.setQueryData(chatKeys.list(), () => {
           return {
             ...previousData,

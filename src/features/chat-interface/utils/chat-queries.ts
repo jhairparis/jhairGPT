@@ -1,4 +1,4 @@
-import { isServer, queryOptions } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 import {
   getChat,
   getChats,
@@ -18,7 +18,7 @@ export const Message = (
   cookies?: Array<RequestCookie | undefined>
 ) => {
   // Server side
-  if (cookies) {
+  if (cookies && id !== "") {
     return queryOptions({
       queryKey: chatKeys.detail(id),
       queryFn: () => getChatServer(id, cookies),
@@ -29,7 +29,15 @@ export const Message = (
   if (id === "") {
     return queryOptions({
       queryKey: chatKeys.detail("no-id"),
-      queryFn: () => ({} as any),
+      queryFn: () =>
+        Promise.resolve({
+          history: [
+            {
+              role: "user",
+              content: [{ type: "text", text: "Show me the weather" }],
+            },
+          ],
+        }),
       enabled: false,
     });
   }
@@ -45,7 +53,7 @@ export const Conversations = (cookies?: any) =>
   queryOptions({
     queryKey: chatKeys.list(),
     queryFn: () => {
-      if (isServer) return getChatsServer(cookies);
+      if (cookies) return getChatsServer(cookies);
 
       return getChats();
     },

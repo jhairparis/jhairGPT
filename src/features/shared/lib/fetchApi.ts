@@ -43,7 +43,7 @@ const fetchWithTimeout = async (
 
 const handleResponse = async <T>(response: Response): Promise<ApiReturn<T>> => {
   if (!response.ok) {
-    throw new Error(`Error ${response.status}: ${response.statusText}`);
+    Promise.reject(`Error ${response.status}: ${response.statusText}`);
   }
   const data = await response.json().catch(() => null);
   return { data, response };
