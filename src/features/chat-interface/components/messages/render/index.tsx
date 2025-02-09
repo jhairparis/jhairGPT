@@ -10,7 +10,7 @@ import {
 } from "@/features/shared/components/ui/card";
 import Json from "highlight.js/lib/languages/json";
 import { Checkbox } from "@/features/shared/components/ui/checkbox";
-import React from "react";
+import React, { Fragment } from "react";
 import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
 
@@ -99,7 +99,10 @@ const blockRule = /^(\${1,2})\n((?:\\[^]|[^\\])+?)\n\1(?:\n|$)/;
 const renderer: Partial<ReactRenderer> = {
   code(snippet: any, lang: any) {
     return (
-      <Card className="overflow-hidden my-2 text-start">
+      <Card
+        className="overflow-hidden my-2 text-start"
+        key={crypto.randomUUID()}
+      >
         <CardHeader className="py-2 px-4 select-none">{lang}</CardHeader>
         <CardContent className="p-0">
           <Lowlight language={lang} value={snippet} markers={[]} />
@@ -115,74 +118,36 @@ const renderer: Partial<ReactRenderer> = {
         title={title ?? undefined}
         width={280}
         height={280}
+        key={crypto.randomUUID()}
       />
     );
   },
   checkbox(checked) {
-    return <Checkbox checked={!!checked} />;
+    return <Checkbox checked={!!checked} key={crypto.randomUUID()} />;
   },
   strong(children) {
     return (
-      <strong>
+      <strong key={crypto.randomUUID()}>
         <Latex>{children as string}</Latex>
       </strong>
     );
   },
-  listItem(children) {
-    if (children.length === 1) {
-      const current = Array.isArray(children[0]) ? children[0][0] : [];
-
-      if (typeof current === "string")
-        return (
-          <li>
-            <Latex>{current}</Latex>
-          </li>
-        );
-
-      if (Array.isArray(current)) {
-        return (
-          <li>
-            {current.map((element, i) =>
-              typeof element === "string" ? (
-                <Latex key={i}>{element}</Latex>
-              ) : (
-                element
-              )
-            )}
-          </li>
-        );
-      }
-
-      return <li>{current}</li>;
-    }
-
-    return (
-      <li className="flex items-center space-x-2">
-        {children.map((child, i) =>
-          Object.hasOwnProperty.call(child, "props") ? (
-            child
-          ) : (
-            <label
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              key={i}
-            >
-              <Latex>{child as string}</Latex>
-            </label>
-          )
-        )}
-      </li>
-    );
-  },
   blockquote(children) {
     return (
-      <blockquote className="mt-6 border-l-2 pl-6 italic">
+      <blockquote
+        className="mt-6 border-l-2 pl-6 italic"
+        key={crypto.randomUUID()}
+      >
         {children}
       </blockquote>
     );
   },
   codespan(code, lang) {
     return (
-      <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+      <code
+        className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold"
+        key={crypto.randomUUID()}
+      >
         {code}
       </code>
     );
@@ -191,7 +156,7 @@ const renderer: Partial<ReactRenderer> = {
     children = processChildren(children);
 
     return (
-      <p className="leading-7 [&:not(:first-child)]:mt-6">
+      <p className="leading-7 [&:not(:first-child)]:mt-6" key={crypto.randomUUID()}>
         {children.map((child, i) => {
           if (typeof child !== "string") return child;
 
@@ -254,18 +219,74 @@ const renderer: Partial<ReactRenderer> = {
   },
   list(children, order, start) {
     if (order)
-      return <ol className="my-6 ml-6 list-decimal [&>li]:mt-2">{children}</ol>;
-    return <ul className="my-6 ml-6 list-disc [&>li]:mt-2">{children}</ul>;
+      return (
+        <ol
+          className="my-6 ml-6 list-decimal [&>li]:mt-2"
+          key={crypto.randomUUID()}
+        >
+          {children}
+        </ol>
+      );
+    return (
+      <ul className="my-6 ml-6 list-disc [&>li]:mt-2" key={crypto.randomUUID()}>
+        {children}
+      </ul>
+    );
+  },
+  listItem(children) {
+    if (children.length === 1) {
+      const current = Array.isArray(children[0]) ? children[0][0] : [];
+
+      if (typeof current === "string")
+        return (
+          <li key={crypto.randomUUID()}>
+            <Latex>{current}</Latex>
+          </li>
+        );
+
+      if (Array.isArray(current)) {
+        return (
+          <li key={crypto.randomUUID()}>
+            {current.map((element, i) =>
+              typeof element === "string" ? (
+                <Latex key={crypto.randomUUID()}>{element}</Latex>
+              ) : (
+                <Fragment key={crypto.randomUUID()}>{element}</Fragment>
+              )
+            )}
+          </li>
+        );
+      }
+
+      return <li key={crypto.randomUUID()}>{current}</li>;
+    }
+
+    return (
+      <li className="flex items-center space-x-2" key={crypto.randomUUID()}>
+        {children.map((child, i) =>
+          Object.hasOwnProperty.call(child, "props") ? (
+            child
+          ) : (
+            <label
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              key={i}
+            >
+              <Latex>{child as string}</Latex>
+            </label>
+          )
+        )}
+      </li>
+    );
   },
   table(children) {
     return (
-      <div className="my-6 w-full overflow-y-auto">
+      <div className="my-6 w-full overflow-y-auto" key={crypto.randomUUID()}>
         <table className="w-full">{children}</table>
       </div>
     );
   },
   tableBody(children) {
-    return <tbody>{children}</tbody>;
+    return <tbody key={crypto.randomUUID()}>{children}</tbody>;
   },
   tableRow(children) {
     const isEmpty = children.every((child) => {
@@ -281,29 +302,40 @@ const renderer: Partial<ReactRenderer> = {
         }
         return !content;
       }
+
       if (typeof child === "string") {
         return child.trim() === "";
       }
       return true;
     });
 
-    if (isEmpty) return <></>;
+    if (isEmpty) return <Fragment key={crypto.randomUUID()}></Fragment>;
 
-    return <tr className="m-0 border-t p-0 even:bg-muted">{children}</tr>;
+    return (
+      <tr className="m-0 border-t p-0 even:bg-muted" key={crypto.randomUUID()}>
+        {children}
+      </tr>
+    );
   },
   tableHeader(children) {
-    return <thead>{children}</thead>;
+    return <thead key={crypto.randomUUID()}>{children}</thead>;
   },
   tableCell(children, flags) {
     if (flags?.header)
       return (
-        <th className="border px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right">
+        <th
+          className="border px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right"
+          key={crypto.randomUUID()}
+        >
           {children}
         </th>
       );
 
     return (
-      <td className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right">
+      <td
+        className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right"
+        key={crypto.randomUUID()}
+      >
         {children}
       </td>
     );
