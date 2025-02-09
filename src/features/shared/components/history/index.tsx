@@ -14,11 +14,7 @@ const History = () => {
   return (
     <>
       {Object.keys(data).map((key) => (
-        <ChatsGroup
-          key={key}
-          groupKey={key}
-          chats={data[key]}
-        />
+        <ChatsGroup key={key} groupKey={key} chats={data[key]} />
       ))}
     </>
   );

@@ -1,11 +1,11 @@
 import { BiSolidErrorAlt } from "react-icons/bi";
 
 interface ErrorStateProps {
-  error: Error;
+  error: Error | null;
 }
 
 export const ChatsError = ({ error }: ErrorStateProps) => {
-  if (error.message === "Error 401: Unauthorized") {
+  if (error?.message === "Error 401: Unauthorized") {
     return (
       <div className="flex flex-col items-center justify-center h-20 gap-2">
         <p>Please SignIn</p>

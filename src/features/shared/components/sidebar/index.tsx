@@ -1,7 +1,6 @@
 "use client";
 import { X, WandSparkles } from "lucide-react";
 import { Button } from "@/features/shared/components/ui/button";
-import History from "../history";
 import {
   Sidebar,
   SidebarContent,
@@ -11,8 +10,11 @@ import {
 } from "@/features/shared/components/ui/sidebar";
 import Ad from "./ad";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
-const AppSidebar = () => {
+type AppSidebarProps = Readonly<{ children: ReactNode }>;
+
+const AppSidebar = ({ children }: AppSidebarProps) => {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -37,9 +39,7 @@ const AppSidebar = () => {
           </Button>
         </div>
       </SidebarHeader>
-      <SidebarContent className="gap-0">
-        <History />
-      </SidebarContent>
+      <SidebarContent className="gap-0">{children}</SidebarContent>
       <SidebarFooter>
         <Ad />
       </SidebarFooter>

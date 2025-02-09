@@ -1,10 +1,13 @@
+"use client";
 import { ThemeProvider } from "./theme-provider";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import queryClient from "@/features/shared/lib/queryClient";
+import { getQueryClient } from "@/features/shared/lib/queryClient";
 import { PreferenceProvider } from "./preference-provider";
 
 const Provider = ({ children }: any) => {
+  const queryClient = getQueryClient();
+
   return (
     <QueryClientProvider client={queryClient}>
       <PreferenceProvider>

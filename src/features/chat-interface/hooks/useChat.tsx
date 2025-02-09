@@ -1,23 +1,20 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { usePreference } from "@/features/shared/providers/preference-provider";
 import {
   chatting,
-  getChat,
-  getChats,
   initializeChat,
   removeChatById,
 } from "@/features/chat-interface/utils/service-chat";
 import { MarkdownItem } from "../components/text-input/text-input";
+import { chatKeys, Conversations, Message } from "../utils/chat-queries";
 
 type c = { message: MarkdownItem[]; chatId_?: string };
-
-export const chatKeys = {
-  all: () => ["chats"],
-  list: () => [...chatKeys.all(), "list"],
-  detail: (id: string) => [...chatKeys.all(), id],
-};
 
 function useChat() {
   const pathname = usePathname();
@@ -27,22 +24,8 @@ function useChat() {
 
   const queryClient = useQueryClient();
 
-  const chatQuery = useQuery({
-    queryKey: chatKeys.detail(chatId),
-    queryFn: () => getChat(chatId),
-    enabled: Boolean(chatId),
-  });
-
-  const chatsQuery = useQuery({
-    queryKey: chatKeys.list(),
-    queryFn: getChats,
-    retry: (failureCount, error) => {
-      if (error instanceof Error && error.message === "Error 401: Unauthorized")
-        return false;
-
-      return failureCount < 3;
-    },
-  });
+  const chatQuery = useSuspenseQuery(Message(chatId));
+  const chatsQuery = useSuspenseQuery(Conversations());
 
   const createChat = useMutation({
     mutationKey: chatKeys.list(),

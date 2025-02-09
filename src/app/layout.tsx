@@ -7,6 +7,11 @@ import AppSidebar from "@/features/shared/components/sidebar";
 import { cookies } from "next/headers";
 import SidebarProvider from "@/features/shared/components/ui/sidebar/sidebar-provider";
 import { SIDEBAR_COOKIE_NAME } from "@/features/shared/constants/sidebar";
+import { AUTH_COOKIE, CSRF_COOKIE } from "@/features/shared/constants/cookies";
+import History from "@/features/shared/components/history";
+import { getQueryClient } from "@/features/shared/lib/queryClient";
+import { Conversations } from "@/features/chat-interface/utils/chat-queries";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { TextInput } from "@/features/chat-interface/components/text-input";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -20,9 +25,17 @@ type RootLayoutProps = Readonly<{
   children: React.ReactNode;
 }>;
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
   const cookieStore = cookies();
+  const queryClient = getQueryClient();
+
   const defaultOpen = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === "true";
+  const authCookies = [
+    cookieStore.get(CSRF_COOKIE),
+    cookieStore.get(AUTH_COOKIE),
+  ];
+
+  await queryClient.prefetchQuery(Conversations(authCookies));
 
   return (
     <html lang="en">
@@ -30,7 +43,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Provider>
           <div className="flex min-h-dvh w-full relative">
             <SidebarProvider defaultOpen={defaultOpen}>
-              <AppSidebar />
+              <AppSidebar>
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                  <History />
+                </HydrationBoundary>
+              </AppSidebar>
               <div className="flex-1 flex flex-col transition-all duration-300">
                 <Header />
                 <div className="flex-1 flex flex-col overflow-hidden">
