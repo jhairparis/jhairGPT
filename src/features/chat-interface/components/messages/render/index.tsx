@@ -34,7 +34,6 @@ const processChildren = (children: any[]) => {
   const newChildren: any[] = [];
   for (let i = 0; i < children.length; i++) {
     const child = children[i];
-    console.log(child, "children");
 
     if (typeof child === "string" && (child === "$$" || child === "$")) {
       const segmentTokens: any[] = [child];
