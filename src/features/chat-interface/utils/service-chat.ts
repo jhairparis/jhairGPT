@@ -2,7 +2,7 @@ import fetchApi from "@/features/shared/lib/fetchApi";
 import type { PreferenceStoreState } from "@/features/shared/providers/preference-provider";
 import { MarkdownItem } from "../components/text-input/text-input";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { ChatHistory } from "../types/global";
+import { ChatHistory } from "../types";
 
 export const getChatServer = async (
   chatId: string,

@@ -1,5 +1,3 @@
-declare module "highlight.js/lib/languages/json";
-
 export interface ChatContent {
   type: string;
   text: string;
