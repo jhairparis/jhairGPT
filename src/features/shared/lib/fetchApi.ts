@@ -1,5 +1,3 @@
-import { ApiError } from "./ApiError";
-
 interface ApiRequestData<T = unknown> {
   [key: string]: T;
 }
@@ -12,6 +10,12 @@ interface ApiReturn<T> {
   data: T;
   response: Response;
 }
+
+export type FetchApiError = {
+  message: string;
+  messageDebug: string;
+  status: number;
+};
 
 interface Api {
   get: <T>(url: string, options?: RequestOptions) => Promise<ApiReturn<T>>;
@@ -45,7 +49,7 @@ const fetchApi: Api = {
       const response = await fetch(`${URL}${url}`, options ?? {});
 
       if (!response.ok)
-        throw new ApiError({
+        return Promise.reject({
           message: response.statusText,
           messageDebug: `Error ${response.status} on ${url}: ${response.statusText}`,
           status: response.status,
@@ -73,7 +77,7 @@ const fetchApi: Api = {
       });
 
       if (!response.ok)
-        throw new ApiError({
+        return Promise.reject({
           message: response.statusText,
           messageDebug: `Error ${response.status} on ${url}: ${response.statusText}`,
           status: response.status,
@@ -101,7 +105,7 @@ const fetchApi: Api = {
       });
 
       if (!response.ok)
-        throw new ApiError({
+        return Promise.reject({
           message: response.statusText,
           messageDebug: `Error ${response.status} on ${url}: ${response.statusText}`,
           status: response.status,
@@ -123,7 +127,7 @@ const fetchApi: Api = {
       });
 
       if (!response.ok)
-        throw new ApiError({
+        return Promise.reject({
           message: response.statusText,
           messageDebug: `Error ${response.status} on ${url}: ${response.statusText}`,
           status: response.status,

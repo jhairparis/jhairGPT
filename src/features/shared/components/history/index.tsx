@@ -2,19 +2,36 @@
 import { ChatsLoading } from "./chats-loading";
 import { ChatsError } from "./chats-error";
 import { ChatsGroup } from "./chats-group";
-import useChatUtils from "../../hooks/useChatUtils";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { chatKeys } from "@/features/chat-interface/utils/chat-queries";
+import { getChats } from "@/features/chat-interface/utils/service-chat";
+import { FetchApiError } from "../../lib/fetchApi";
+import { OrderChat } from "@/features/chat-interface/types";
 
 const History = () => {
-  const { chatsQuery } = useChatUtils();
-  const { isPending, isError, data, error } = chatsQuery;
+  const { isPending, isError, data, error } = useSuspenseQuery({
+    queryKey: chatKeys.list(),
+    queryFn: () => getChats(),
+    staleTime: 60 * 1000,
+  });
 
   if (isPending) return <ChatsLoading />;
-  if (isError) return <ChatsError error={error} />;
+
+  if (isError && error)
+    return <ChatsError error={error as unknown as FetchApiError} />;
+
+  if (data.error) return <ChatsError error={JSON.parse(data.error)} />;
+
+  const keys = Object.keys(data) as (keyof Omit<OrderChat, "error">)[];
 
   return (
     <>
-      {Object.keys(data).map((key) => (
-        <ChatsGroup key={key} groupKey={key} chats={data[key]} />
+      {keys.map((key) => (
+        <ChatsGroup
+          key={key as string}
+          groupKey={key as string}
+          chats={data[key]}
+        />
       ))}
     </>
   );

@@ -14,10 +14,11 @@ import {
 } from "../ui/sidebar";
 import { ChatsItem } from "./chats-item";
 import { DATE_GROUP_LABELS } from "../../constants/date-groups";
+import { Chat } from "@/features/chat-interface/types";
 
 interface ChatGroupProps {
   groupKey: string;
-  chats: any[];
+  chats: Chat[];
 }
 
 export const ChatsGroup = ({ groupKey, chats }: ChatGroupProps) => {

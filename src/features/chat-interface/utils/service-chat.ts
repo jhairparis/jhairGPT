@@ -2,7 +2,7 @@ import fetchApi from "@/features/shared/lib/fetchApi";
 import type { PreferenceStoreState } from "@/features/shared/providers/preference-provider";
 import { MarkdownItem } from "../components/text-input/text-input";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { ChatHistory } from "../types";
+import { ChatHistory, ChatList } from "../types";
 
 export const getChatServer = async (
   chatId: string,
@@ -10,20 +10,26 @@ export const getChatServer = async (
 ) => {
   if (!cookies) throw new Error("No cookies");
 
-  const cookieHeader = cookies
-    .filter((cookie): cookie is RequestCookie => cookie !== undefined)
-    .map((cookie) => `${cookie.name}=${cookie.value}`)
-    .join("; ");
+  try {
+    const cookieHeader = cookies
+      .filter((cookie): cookie is RequestCookie => cookie !== undefined)
+      .map((cookie) => `${cookie.name}=${cookie.value}`)
+      .join("; ");
 
-  const { data } = await fetchApi.get<ChatHistory>(`/gpt/chat/${chatId}`, {
-    headers: {
-      Cookie: cookieHeader,
-    },
-    credentials: "include",
-    next: { revalidate: 60 },
-  });
+    const { data } = await fetchApi.get<ChatHistory>(`/gpt/chat/${chatId}`, {
+      headers: {
+        Cookie: cookieHeader,
+      },
+      credentials: "include",
+      next: { revalidate: 60 },
+    });
 
-  return data.result;
+    return data.result;
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
+    };
+  }
 };
 
 export const getChat = async (chatId: string) => {
@@ -42,33 +48,33 @@ export const getChatsServer = async (
 ) => {
   if (!cookies) throw new Error("No cookies");
 
-  const cookieHeader = cookies
-    .filter((cookie): cookie is RequestCookie => cookie !== undefined)
-    .map((cookie) => `${cookie.name}=${cookie.value}`)
-    .join("; ");
+  try {
+    const cookieHeader = cookies
+      .filter((cookie): cookie is RequestCookie => cookie !== undefined)
+      .map((cookie) => `${cookie.name}=${cookie.value}`)
+      .join("; ");
 
-  const { data } = await fetchApi.get<{ result: Record<string, string[]> }>(
-    `/gpt/chat`,
-    {
+    const { data } = await fetchApi.get<ChatList>(`/gpt/chat`, {
       headers: {
         Cookie: cookieHeader,
       },
       credentials: "include",
       next: { revalidate: 20 },
-    }
-  );
+    });
 
-  return data.result;
+    return data.result;
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
+    };
+  }
 };
 
 export const getChats = async () => {
-  const { data } = await fetchApi.get<{ result: Record<string, string[]> }>(
-    `/gpt/chat`,
-    {
-      credentials: "include",
-      next: { revalidate: 20 },
-    }
-  );
+  const { data } = await fetchApi.get<ChatList>(`/gpt/chat`, {
+    credentials: "include",
+    next: { revalidate: 20 },
+  });
 
   return data.result;
 };

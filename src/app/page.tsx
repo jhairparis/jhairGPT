@@ -4,8 +4,9 @@ import History from "@/features/shared/components/history";
 import { cookies } from "next/headers";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClientDynamic } from "@/features/shared/lib/queryClientDynamic";
-import { ConversationsServer } from "@/features/chat-interface/utils/chat-queries";
+import { chatKeys } from "@/features/chat-interface/utils/chat-queries";
 import { getAuth } from "@/features/auth/utils/auth";
+import { getChatsServer } from "@/features/chat-interface/utils/service-chat";
 
 const appName = "JhairGPT";
 
@@ -15,7 +16,11 @@ const Page = async () => {
 
   const { authCookies } = await getAuth(cookieStore);
 
-  await queryClient.prefetchQuery(ConversationsServer(authCookies));
+  await queryClient.prefetchQuery({
+    queryKey: chatKeys.list(),
+    queryFn: () => getChatsServer(authCookies),
+    staleTime: 60 * 1000,
+  });
 
   return (
     <>
@@ -24,7 +29,7 @@ const Page = async () => {
           <History />
         </HydrationBoundary>
       </AppSidebar>
-      <Speak>
+      {/* <Speak>
         <main className="flex-grow flex flex-col justify-center">
           <div className="flex flex-col justify-center items-center max-w-4xl w-full text-center mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white m-0 max-w-fit overflow-hidden whitespace-nowrap animation">
@@ -35,7 +40,7 @@ const Page = async () => {
             </p>
           </div>
         </main>
-      </Speak>
+      </Speak> */}
     </>
   );
 };
