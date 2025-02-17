@@ -6,8 +6,10 @@ import { ChatHistory } from "../types";
 
 export const getChatServer = async (
   chatId: string,
-  cookies: Array<RequestCookie | undefined>
+  cookies: RequestCookie[] | null
 ) => {
+  if (!cookies) throw new Error("No cookies");
+
   const cookieHeader = cookies
     .filter((cookie): cookie is RequestCookie => cookie !== undefined)
     .map((cookie) => `${cookie.name}=${cookie.value}`)
@@ -25,6 +27,8 @@ export const getChatServer = async (
 };
 
 export const getChat = async (chatId: string) => {
+  if (!chatId) throw new Error("No chatId");
+
   const { data } = await fetchApi.get<ChatHistory>(`/gpt/chat/${chatId}`, {
     credentials: "include",
     next: { revalidate: 60 },
@@ -34,29 +38,37 @@ export const getChat = async (chatId: string) => {
 };
 
 export const getChatsServer = async (
-  cookies: Array<RequestCookie | undefined>
+  cookies: RequestCookie[] | undefined | null
 ) => {
+  if (!cookies) throw new Error("No cookies");
+
   const cookieHeader = cookies
     .filter((cookie): cookie is RequestCookie => cookie !== undefined)
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
-  const { data } = await fetchApi.get<any>(`/gpt/chat`, {
-    headers: {
-      Cookie: cookieHeader,
-    },
-    credentials: "include",
-    next: { revalidate: 60 },
-  });
+  const { data } = await fetchApi.get<{ result: Record<string, string[]> }>(
+    `/gpt/chat`,
+    {
+      headers: {
+        Cookie: cookieHeader,
+      },
+      credentials: "include",
+      next: { revalidate: 20 },
+    }
+  );
 
   return data.result;
 };
 
 export const getChats = async () => {
-  const { data } = await fetchApi.get<any>(`/gpt/chat`, {
-    credentials: "include",
-    next: { revalidate: 60 },
-  });
+  const { data } = await fetchApi.get<{ result: Record<string, string[]> }>(
+    `/gpt/chat`,
+    {
+      credentials: "include",
+      next: { revalidate: 20 },
+    }
+  );
 
   return data.result;
 };
@@ -72,7 +84,7 @@ export const initializeChat = async (
 
   const { data } = await fetchApi.post<any>(`/gpt`, sendData, {
     credentials: "include",
-    timeout: 20000,
+    // timeout: 20000,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -99,7 +111,7 @@ export const chatting = async (
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    timeout: 20000,
+    // timeout: 20000,
     next: { revalidate: 120 },
   });
 

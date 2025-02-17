@@ -3,12 +3,12 @@ import AssistantBubble from "./assistant-bubble";
 import ActionsButtons from "./assistant-bubble/ActionsButtons";
 import UserBubble from "./user-bubble";
 import { AiOutlineLoading } from "react-icons/ai";
-import useChat from "../../hooks/useChat";
 import { notFound } from "next/navigation";
+import useChatUtils from "@/features/shared/hooks/useChatUtils";
 
 const Messages = () => {
-  const { chatQuery } = useChat();
-  const { isPending, isError, data, error } = chatQuery;
+  const { chatQuery } = useChatUtils();
+  const { isPending, isError, data } = chatQuery;
 
   if (isPending) {
     return (

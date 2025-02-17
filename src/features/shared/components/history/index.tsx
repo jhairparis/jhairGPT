@@ -1,11 +1,11 @@
 "use client";
-import useChat from "@/features/chat-interface/hooks/useChat";
 import { ChatsLoading } from "./chats-loading";
 import { ChatsError } from "./chats-error";
 import { ChatsGroup } from "./chats-group";
+import useChatUtils from "../../hooks/useChatUtils";
 
 const History = () => {
-  const { chatsQuery } = useChat();
+  const { chatsQuery } = useChatUtils();
   const { isPending, isError, data, error } = chatsQuery;
 
   if (isPending) return <ChatsLoading />;

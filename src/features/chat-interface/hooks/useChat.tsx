@@ -1,10 +1,6 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePreference } from "@/features/shared/providers/preference-provider";
 import {
   chatting,
@@ -12,7 +8,8 @@ import {
   removeChatById,
 } from "@/features/chat-interface/utils/service-chat";
 import { MarkdownItem } from "../components/text-input/text-input";
-import { chatKeys, Conversations, Message } from "../utils/chat-queries";
+import { chatKeys } from "../utils/chat-queries";
+import { getQueryClientDynamic } from "@/features/shared/lib/queryClientDynamic";
 
 type c = { message: MarkdownItem[]; chatId_?: string };
 
@@ -23,19 +20,19 @@ function useChat() {
   const currentModel = usePreference((state) => state.currentModel);
 
   const queryClient = useQueryClient();
-
-  const chatQuery = useSuspenseQuery(Message(chatId));
-  const chatsQuery = useSuspenseQuery(Conversations());
+  const queryClientDynamic = getQueryClientDynamic();
 
   const createChat = useMutation({
     mutationKey: chatKeys.list(),
     mutationFn: ({ message }: c) => initializeChat(message, currentModel),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: chatKeys.list() });
-      const previousData: any = queryClient.getQueryData(chatKeys.list());
+      await queryClientDynamic.cancelQueries({ queryKey: chatKeys.list() });
+      const previousData: any = queryClientDynamic.getQueryData(
+        chatKeys.list()
+      );
 
       if (previousData && Object.keys(previousData).length > 0)
-        queryClient.setQueryData(chatKeys.list(), () => {
+        queryClientDynamic.setQueryData(chatKeys.list(), () => {
           return {
             ...previousData,
             today: previousData["today"].concat({
@@ -54,7 +51,7 @@ function useChat() {
       console.log(e, "hey");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: chatKeys.list() });
+      queryClientDynamic.invalidateQueries({ queryKey: chatKeys.list() });
     },
   });
 
@@ -101,10 +98,12 @@ function useChat() {
     mutationFn: ({ id }: { id: string; groupKey: string }) =>
       removeChatById(id),
     onMutate: async ({ groupKey, id }) => {
-      await queryClient.cancelQueries({ queryKey: chatKeys.list() });
-      const previousData: any = queryClient.getQueryData(chatKeys.list());
+      await queryClientDynamic.cancelQueries({ queryKey: chatKeys.list() });
+      const previousData: any = queryClientDynamic.getQueryData(
+        chatKeys.list()
+      );
 
-      queryClient.setQueryData(chatKeys.list(), () => {
+      queryClientDynamic.setQueryData(chatKeys.list(), () => {
         return {
           ...previousData,
           [groupKey]: previousData[groupKey].filter(
@@ -119,15 +118,13 @@ function useChat() {
       console.log(e, "hey");
     },
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: chatKeys.list() });
+      queryClientDynamic.invalidateQueries({ queryKey: chatKeys.list() });
       queryClient.invalidateQueries({ queryKey: chatKeys.detail(id) });
       if (pathname === `/c/${id}`) router.push("/");
     },
   });
 
   return {
-    chatQuery,
-    chatsQuery,
     createChat,
     updateChat,
     deleteChat,

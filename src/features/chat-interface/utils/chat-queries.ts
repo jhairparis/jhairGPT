@@ -6,6 +6,7 @@ import {
   getChatsServer,
 } from "./service-chat";
 import type { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import { ApiError } from "@/features/shared/lib/ApiError";
 
 export const chatKeys = {
   all: () => ["chats"],
@@ -13,53 +14,35 @@ export const chatKeys = {
   detail: (id: string) => [...chatKeys.all(), id],
 };
 
-export const Message = (
-  id: string,
-  cookies?: Array<RequestCookie | undefined>
-) => {
-  // Server side
-  if (cookies && id !== "") {
-    return queryOptions({
-      queryKey: chatKeys.detail(id),
-      queryFn: () => getChatServer(id, cookies),
-    });
-  }
-
-  // Client side
-  if (id === "") {
-    return queryOptions({
-      queryKey: chatKeys.detail("no-id"),
-      queryFn: () =>
-        Promise.resolve({
-          history: [
-            {
-              role: "user",
-              content: [{ type: "text", text: "Show me the weather" }],
-            },
-          ],
-        }),
-      enabled: false,
-    });
-  }
-
-  return queryOptions({
-    queryKey: chatKeys.detail(id),
-    queryFn: () => getChat(id),
-    enabled: true,
-  });
+const retry = (failureCount: number, error: Error) => {
+  if (error instanceof ApiError && error.status === 401) return false;
+  return failureCount < 3;
 };
 
-export const Conversations = (cookies?: any) =>
+export const MessageServer = (id: string, cookies: RequestCookie[] | null) =>
+  queryOptions({
+    queryKey: chatKeys.detail(id),
+    queryFn: () => getChatServer(id, cookies),
+    retry,
+  });
+
+export const Message = (id: string) =>
+  queryOptions({
+    queryKey: chatKeys.detail(id),
+    queryFn: () => getChat(id),
+    enabled: !!id,
+    retry,
+  });
+
+export const ConversationsServer = (cookies?: RequestCookie[] | null) =>
   queryOptions({
     queryKey: chatKeys.list(),
-    queryFn: () => {
-      if (cookies) return getChatsServer(cookies);
-
-      return getChats();
-    },
-    retry: (failureCount, error) => {
-      if (error instanceof Error && error.message === "Error 401: Unauthorized")
-        return false;
-      return failureCount < 3;
-    },
+    queryFn: () => getChatsServer(cookies),
+    retry,
   });
+
+export const Conversations = queryOptions({
+  queryKey: chatKeys.list(),
+  queryFn: () => getChats(),
+  retry,
+});

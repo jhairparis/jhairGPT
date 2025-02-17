@@ -1,13 +1,16 @@
 import { AUTH_COOKIE, CSRF_COOKIE } from "@/features/shared/constants/cookies";
+import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
-export async function getAuth(cookieStore: any) {
-  const authCookies = [
-    cookieStore.get(CSRF_COOKIE),
-    cookieStore.get(AUTH_COOKIE),
-  ];
+export async function getAuth(cookieStore: ReadonlyRequestCookies) {
+  const _1 = cookieStore.get(CSRF_COOKIE);
+  const _2 = cookieStore.get(AUTH_COOKIE);
+
+  let authCookies;
+  if (!(_1 && _2)) authCookies = null;
+  else authCookies = [_1, _2];
 
   return {
-    isAuth: authCookies[0] && authCookies[1],
+    isAuth: _1 && _2,
     authCookies: authCookies,
   };
 }

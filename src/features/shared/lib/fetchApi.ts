@@ -1,10 +1,11 @@
+import { ApiError } from "./ApiError";
+
 interface ApiRequestData<T = unknown> {
   [key: string]: T;
 }
 
 type RequestOptions = Omit<RequestInit, "headers"> & {
   headers?: HeadersInit;
-  timeout?: number;
 };
 
 interface ApiReturn<T> {
@@ -29,30 +30,10 @@ interface Api {
 
 const URL = process.env.NEXT_PUBLIC_URL;
 
-const fetchWithTimeout = async (
-  url: string,
-  options: RequestOptions,
-  timeout: number
-): Promise<Response> => {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-  const response = await fetch(url, { ...options, signal: controller.signal });
-  clearTimeout(id);
-  return response;
-};
-
 const handleResponse = async <T>(response: Response): Promise<ApiReturn<T>> => {
-  if (!response.ok) {
-    Promise.reject(`Error ${response.status}: ${response.statusText}`);
-  }
   const data = await response.json().catch(() => null);
-  return { data, response };
-};
 
-const logError = (error: unknown): void => {
-  if (process.env.NODE_ENV !== "production") {
-    console.error("API Error:", error);
-  }
+  return { data, response };
 };
 
 const fetchApi: Api = {
@@ -61,16 +42,18 @@ const fetchApi: Api = {
     options?: RequestOptions
   ): Promise<ApiReturn<T>> => {
     try {
-      const timeout = options?.timeout || 5000;
-      const response = await fetchWithTimeout(
-        `${URL}${url}`,
-        options ?? {},
-        timeout
-      );
+      const response = await fetch(`${URL}${url}`, options ?? {});
+
+      if (!response.ok)
+        throw new ApiError({
+          message: response.statusText,
+          messageDebug: `Error ${response.status} on ${url}: ${response.statusText}`,
+          status: response.status,
+        });
+
       return handleResponse<T>(response);
     } catch (error) {
-      logError(error);
-      throw error;
+      return Promise.reject(error);
     }
   },
   post: async <T>(
@@ -79,24 +62,26 @@ const fetchApi: Api = {
     options?: RequestOptions
   ): Promise<ApiReturn<T>> => {
     try {
-      const timeout = options?.timeout || 5000;
-      const response = await fetchWithTimeout(
-        `${URL}${url}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(options?.headers || {}),
-          },
-          body: JSON.stringify(data),
-          ...options,
+      const response = await fetch(`${URL}${url}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(options?.headers || {}),
         },
-        timeout
-      );
+        body: JSON.stringify(data),
+        ...options,
+      });
+
+      if (!response.ok)
+        throw new ApiError({
+          message: response.statusText,
+          messageDebug: `Error ${response.status} on ${url}: ${response.statusText}`,
+          status: response.status,
+        });
+
       return handleResponse<T>(response);
     } catch (error) {
-      logError(error);
-      throw error;
+      return Promise.reject(error);
     }
   },
   put: async <T>(
@@ -105,24 +90,26 @@ const fetchApi: Api = {
     options?: RequestOptions
   ): Promise<ApiReturn<T>> => {
     try {
-      const timeout = options?.timeout || 5000;
-      const response = await fetchWithTimeout(
-        `${URL}${url}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            ...(options?.headers || {}),
-          },
-          body: JSON.stringify(data),
-          ...options,
+      const response = await fetch(`${URL}${url}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(options?.headers || {}),
         },
-        timeout
-      );
+        body: JSON.stringify(data),
+        ...options,
+      });
+
+      if (!response.ok)
+        throw new ApiError({
+          message: response.statusText,
+          messageDebug: `Error ${response.status} on ${url}: ${response.statusText}`,
+          status: response.status,
+        });
+
       return handleResponse<T>(response);
     } catch (error) {
-      logError(error);
-      throw error;
+      return Promise.reject(error);
     }
   },
   delete: async <T>(
@@ -130,16 +117,21 @@ const fetchApi: Api = {
     options?: RequestOptions
   ): Promise<ApiReturn<T>> => {
     try {
-      const timeout = options?.timeout || 5000;
-      const response = await fetchWithTimeout(
-        `${URL}${url}`,
-        { method: "DELETE", ...(options ?? {}) },
-        timeout
-      );
+      const response = await fetch(`${URL}${url}`, {
+        method: "DELETE",
+        ...(options ?? {}),
+      });
+
+      if (!response.ok)
+        throw new ApiError({
+          message: response.statusText,
+          messageDebug: `Error ${response.status} on ${url}: ${response.statusText}`,
+          status: response.status,
+        });
+
       return handleResponse<T>(response);
     } catch (error) {
-      logError(error);
-      throw error;
+      return Promise.reject(error);
     }
   },
 };

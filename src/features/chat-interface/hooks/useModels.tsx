@@ -9,8 +9,6 @@ const getModels = async () => {
   return response.data.result;
 };
 
-const useModels = () => {
-  return useQuery({ queryKey: ["models"], queryFn: getModels });
-};
+const useModels = () => useQuery({ queryKey: ["models"], queryFn: getModels });
 
 export default useModels;

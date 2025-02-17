@@ -11,8 +11,6 @@ const getSession = async () => {
   return response.data.user;
 };
 
-const useAuth = () => {
-  return useQuery({ queryKey: ["session"], queryFn: getSession });
-};
+const useAuth = () => useQuery({ queryKey: ["session"], queryFn: getSession });
 
 export default useAuth;
