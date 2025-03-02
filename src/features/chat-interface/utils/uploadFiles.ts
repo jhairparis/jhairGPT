@@ -1,4 +1,4 @@
-import fetchApi from "@/features/shared/lib/fetchApi";
+import { Backend_url } from "@/features/shared/constants/query";
 
 type PresignedPost = {
   key: string;
@@ -24,11 +24,14 @@ const getPresignedPost: GetPresignedPost = async (param) => {
     where: "chat",
   });
 
-  const response = await fetchApi.get<{ result: PresignedPost }>(
-    `/upload?${params}`
-  );
+  const response = await fetch(`${Backend_url}/upload?${params}`);
 
-  const res = response.data.result;
+  if (!response.ok) return null;
+
+  const data: { result: PresignedPost } = await response.json();
+
+  const res = data.result;
+
   if (res === null) return null;
 
   return {

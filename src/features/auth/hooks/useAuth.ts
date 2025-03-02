@@ -1,14 +1,22 @@
-import fetchApi from "@/features/shared/lib/fetchApi";
+import { Backend_url } from "@/features/shared/constants/query";
 import { useQuery } from "@tanstack/react-query";
 
 const getSession = async () => {
-  const response = await fetchApi.get<any>("/auth/session", {
+  const response = await fetch(`${Backend_url}/auth/session`, {
     credentials: "include",
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
-  if (!response.data || Object.keys(response.data).length === 0) return null;
+  if (!response.ok) return null;
 
-  return response.data.user;
+  const data = await response.json();
+
+  if (!data || Object.keys(data).length === 0) return null;
+
+  return data.user;
 };
 
 const useAuth = () => useQuery({ queryKey: ["session"], queryFn: getSession });

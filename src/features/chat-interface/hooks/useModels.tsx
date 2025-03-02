@@ -1,12 +1,18 @@
-import fetchApi from "@/features/shared/lib/fetchApi";
+import { Backend_url } from "@/features/shared/constants/query";
 import { useQuery } from "@tanstack/react-query";
 
 const getModels = async () => {
-  const response = await fetchApi.get<any>(`/gpt/models`, {
+  const response = await fetch(`${Backend_url}/gpt/models`, {
     credentials: "include",
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
-  return response.data.result;
+  const data = await response.json();
+
+  return data.result;
 };
 
 const useModels = () => useQuery({ queryKey: ["models"], queryFn: getModels });

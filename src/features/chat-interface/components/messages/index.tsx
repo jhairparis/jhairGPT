@@ -25,15 +25,18 @@ const Messages = () => {
   return (
     <div className="max-w-4xl px-4 sm:px-6 lg:px-8 mx-auto">
       <ul className="mt-5">
-        {data.history?.map(({ role, content }, index) =>
-          role === "user" ? (
-            <UserBubble key={index + role} content={content} />
-          ) : (
-            <AssistantBubble key={index + role} content={content}>
-              <ActionsButtons newAnswer={index === data.history!.length - 1} />
-            </AssistantBubble>
-          )
-        )}
+        {"history" in data &&
+          data.history?.map(({ role, content }, index) =>
+            role === "user" ? (
+              <UserBubble key={index + role} content={content} />
+            ) : (
+              <AssistantBubble key={index + role} content={content}>
+                <ActionsButtons
+                  newAnswer={index === data.history!.length - 1}
+                />
+              </AssistantBubble>
+            )
+          )}
       </ul>
     </div>
   );
