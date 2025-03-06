@@ -1,4 +1,5 @@
-import React, { ReactNode } from "react";
+import { Fragment } from "react";
+import type { ReactNode } from "react";
 import Latex from "react-latex-next";
 import {
   inlineRule,
@@ -11,21 +12,24 @@ import {
 
 const LatexParagraph = ({ children }: { children: ReactNode[] }) => {
   children = processChildren(children);
+  
+  // Generate a unique ID for this paragraph instance
+  const paragraphId = crypto.randomUUID();
 
   return (
     <p
       className="leading-7 [&:not(:first-child)]:mt-6"
-      key={crypto.randomUUID()}
+      key={`latex-p-${paragraphId}`}
     >
       {children.map((child, i) => {
-        if (typeof child !== "string") return child;
+        if (typeof child !== "string") return <Fragment key={`non-string-${paragraphId}-${i}`}>{child}</Fragment>;
 
         if (
           child.match(inlineRule) ||
           child.match(inlineRuleNonStandard) ||
           child.match(blockRule)
         ) {
-          return <Latex key={i}>{child}</Latex>;
+          return <Latex key={`latex-full-${paragraphId}-${i}`}>{child}</Latex>;
         }
 
         if (child.match(inlineRuleNoStart)) {
@@ -40,11 +44,13 @@ const LatexParagraph = ({ children }: { children: ReactNode[] }) => {
           }
           parts.push(child.slice(lastIndex));
 
-          return parts.map((part, idx) =>
+          return parts.map((part, j) =>
             part.match(inlineRuleNoStart) ? (
-              <Latex key={idx}>{part}</Latex>
+              <Latex key={`latex-inline-${paragraphId}-${i}-${j}`}>{part}</Latex>
             ) : (
-              part
+              <Fragment key={`fragment-inline-${paragraphId}-${i}-${j}`}>
+                {part}
+              </Fragment>
             )
           );
         }
@@ -61,16 +67,18 @@ const LatexParagraph = ({ children }: { children: ReactNode[] }) => {
           }
           parts.push(child.slice(lastIndex));
 
-          return parts.map((part, idx) =>
+          return parts.map((part, j) =>
             part.match(inlineRuleNonStandardNoStart) ? (
-              <Latex key={idx}>{part}</Latex>
+              <Latex key={`latex-nonstandard-${paragraphId}-${i}-${j}`}>{part}</Latex>
             ) : (
-              part
+              <Fragment key={`fragment-nonstandard-${paragraphId}-${i}-${j}`}>
+                {part}
+              </Fragment>
             )
           );
         }
 
-        return child;
+        return <Fragment key={`text-${paragraphId}-${i}`}>{child}</Fragment>;
       })}
     </p>
   );

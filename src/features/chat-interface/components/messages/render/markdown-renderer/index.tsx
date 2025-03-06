@@ -75,19 +75,23 @@ const markdownRenderer: Partial<ReactRenderer> = {
   },
 
   paragraph(children) {
-    return <LatexParagraph>{children as ReactNode[]}</LatexParagraph>;
+    return (
+      <LatexParagraph key={crypto.randomUUID()}>
+        {children as ReactNode[]}
+      </LatexParagraph>
+    );
   },
 
   list(children, ordered, start) {
     return (
-      <List ordered={ordered} start={start}>
+      <List ordered={ordered} start={start} key={crypto.randomUUID()}>
         {children}
       </List>
     );
   },
 
   listItem(children) {
-    return <ListItem>{children}</ListItem>;
+    return <ListItem key={crypto.randomUUID()}>{children}</ListItem>;
   },
 
   table(children) {
