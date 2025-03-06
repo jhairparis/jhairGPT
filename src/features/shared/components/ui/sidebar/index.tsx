@@ -9,7 +9,11 @@ import { cn } from "@/features/shared/lib/utils";
 import { Button } from "@/features/shared/components/ui/button";
 import { Input } from "@/features/shared/components/ui/input";
 import { Separator } from "@/features/shared/components/ui/separator";
-import { Sheet, SheetContent } from "@/features/shared/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@/features/shared/components/ui/sheet";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
 import {
   Tooltip,
@@ -59,6 +63,7 @@ const Sidebar = React.forwardRef<
     if (isMobile) {
       return (
         <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+          <SheetTitle hidden={true}>Chats history</SheetTitle>
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"

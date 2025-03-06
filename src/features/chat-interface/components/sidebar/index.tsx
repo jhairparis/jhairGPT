@@ -28,7 +28,7 @@ const AppSidebar = ({ children }: AppSidebarProps) => {
             onClick={toggleSidebar}
           >
             <X className="h-5 w-5" />
-            <span className="sr-only">Close navigation menu desktop</span>
+            <span className="sr-only">Toggle Sidebar</span>
           </Button>
 
           <Button variant="outline" size="icon" className="ml-auto" asChild>
