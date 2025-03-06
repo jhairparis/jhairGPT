@@ -168,7 +168,11 @@ const TextInput = () => {
         slashMenu={false}
         formattingToolbar={false}
         onKeyDownCapture={shortcuts}
-        theme={resolvedTheme === "system" ? "light" : (resolvedTheme as any)}
+        theme={
+          resolvedTheme === "light" || resolvedTheme === "dark"
+            ? resolvedTheme
+            : "light"
+        }
         className="flex-1"
       >
         <SuggestionMenuControllerCustom

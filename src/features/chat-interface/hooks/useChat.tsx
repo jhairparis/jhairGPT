@@ -10,6 +10,7 @@ import {
 import { MarkdownItem } from "../components/text-input/text-input";
 import { chatKeys } from "../utils/chat-queries";
 import { getQueryClientDynamic } from "@/features/shared/lib/queryClientDynamic";
+import { toast } from "sonner";
 
 type c = { message: MarkdownItem[]; chatId_?: string };
 
@@ -45,10 +46,11 @@ function useChat() {
       return { previousData };
     },
     onSuccess: (data) => {
+      toast.success("Chat created successfully");
       router.push(`/c/${data.chatId}`);
     },
     onError: (e) => {
-      console.log(e, "hey");
+      toast.error("Failed to start new chat");
     },
     onSettled: () => {
       queryClientDynamic.invalidateQueries({ queryKey: chatKeys.list() });
@@ -86,6 +88,7 @@ function useChat() {
       }
     },
     onError: (_, __, context) => {
+      toast.error("Failed to send message");
       queryClient.setQueryData(chatKeys.detail(chatId), context?.previousData);
     },
     onSettled: () => {
@@ -115,9 +118,10 @@ function useChat() {
       return { previousData };
     },
     onError: (e) => {
-      console.log(e, "hey");
+      toast.error("Failed to delete chat");
     },
     onSuccess: (_, { id }) => {
+      toast.success("Chat deleted successfully");
       queryClientDynamic.invalidateQueries({ queryKey: chatKeys.list() });
       queryClient.invalidateQueries({ queryKey: chatKeys.detail(id) });
       if (pathname === `/c/${id}`) router.push("/");
