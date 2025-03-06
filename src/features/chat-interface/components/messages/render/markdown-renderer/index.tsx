@@ -14,7 +14,7 @@ import { Checkbox } from "@/features/shared/components/ui/checkbox";
 
 const markdownRenderer: Partial<ReactRenderer> = {
   code(snippet, lang) {
-    return <CodeBlock snippet={snippet as string} lang={lang as string} />;
+    return <CodeBlock snippet={snippet as string} lang={lang as string} key={crypto.randomUUID()} />;
   },
 
   image(src, alt, title) {
