@@ -18,7 +18,7 @@ const Messages = () => {
     );
   }
 
-  if (isError) {
+  if (isError || data === null) {
     return notFound();
   }
 

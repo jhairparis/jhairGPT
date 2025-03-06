@@ -31,7 +31,7 @@ const AppSidebar = ({ children }: AppSidebarProps) => {
             <span className="sr-only">Close navigation menu desktop</span>
           </Button>
 
-          <Button variant="outline" size="icon" className="ml-auto">
+          <Button variant="outline" size="icon" className="ml-auto" asChild>
             <Link href="/">
               <WandSparkles className="h-5 w-5" />
               <span className="sr-only">New chat</span>

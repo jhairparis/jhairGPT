@@ -3,6 +3,7 @@ import { MarkdownItem } from "../components/text-input/text-input";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { ChatHistory, ChatList } from "../types";
 import { Backend_url } from "@/features/shared/constants/query";
+import { notFound } from "next/navigation";
 
 const handleError = (error: any, where: string) => {
   return { message: error, where };
@@ -27,7 +28,12 @@ export const getChatServer = async (
       credentials: "include",
       next: { revalidate: 60 },
     });
-    const data = (await response.json()) as { result: ChatHistory["result"] };
+
+    if (!response.ok)
+      return null;
+
+    const data: { result: ChatHistory["result"] } = await response.json();
+
     return data.result;
   } catch (error) {
     return { error: JSON.parse(error as string) };
