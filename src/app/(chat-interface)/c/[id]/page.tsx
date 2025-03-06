@@ -11,6 +11,7 @@ type props = { params: { id: string } };
 export default async function ChatInterface(params: props) {
   const cookieStore = cookies();
   const chatId = params.params.id;
+
   const queryClient = getQueryClientDynamic();
 
   const { authCookies } = await getAuth(cookieStore);
