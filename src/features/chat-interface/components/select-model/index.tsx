@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/features/shared/components/ui/select";
-import useModels from "../../hooks/useModels";
+import useModels from "../../hooks/use-models";
 import { usePreference } from "@/features/shared/providers/preference-provider";
 
 interface Model {

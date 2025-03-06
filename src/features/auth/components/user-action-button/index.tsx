@@ -1,5 +1,5 @@
 "use client";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/use-auth";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
 import { LoginMenu } from "./login-menu";
 import { GuestMenu } from "./guest-menu";

@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
-import useChat from "@/features/chat-interface/hooks/useChat";
+import useChat from "@/features/chat-interface/hooks/use-chat";
 import {
   Collapsible,
   CollapsibleContent,

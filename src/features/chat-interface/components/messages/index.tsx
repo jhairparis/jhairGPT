@@ -1,10 +1,10 @@
 "use client";
 import AssistantBubble from "./assistant-bubble";
-import ActionsButtons from "./assistant-bubble/ActionsButtons";
+import ActionsButtons from "./assistant-bubble/actions-buttons";
 import UserBubble from "./user-bubble";
 import { AiOutlineLoading } from "react-icons/ai";
 import { notFound } from "next/navigation";
-import useChatUtils from "@/features/chat-interface/hooks/useChatUtils";
+import useChatUtils from "@/features/chat-interface/hooks/use-chat-utils";
 
 const Messages = () => {
   const { chatQuery } = useChatUtils();

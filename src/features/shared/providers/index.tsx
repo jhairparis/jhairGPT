@@ -1,14 +1,14 @@
 "use client";
 import { ThemeProvider } from "@/features/shared/providers/theme-provider";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { getQueryClientDynamic } from "@/features/shared/lib/queryClientDynamic";
+import { GetQueryClientDynamic } from "@/features/shared/lib/query-client-dynamic";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 type LayoutProviderProps = Readonly<{
   children: React.ReactNode;
 }>;
 const LayoutProvider = ({ children }: LayoutProviderProps) => {
-  const queryClient = getQueryClientDynamic();
+  const queryClient = GetQueryClientDynamic();
 
   return (
     <QueryClientProvider client={queryClient}>

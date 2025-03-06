@@ -22,7 +22,7 @@ function makeQueryClient() {
 
 let browserQueryClient: QueryClient | undefined = undefined;
 
-export function getQueryClientDynamic() {
+export function GetQueryClientDynamic() {
   if (isServer) {
     // Server: always make a new query client
     return makeQueryClient();

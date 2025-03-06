@@ -9,7 +9,7 @@ import {
 } from "@/features/chat-interface/utils/service-chat";
 import { MarkdownItem } from "../components/text-input/text-input";
 import { chatKeys } from "../utils/chat-queries";
-import { getQueryClientDynamic } from "@/features/shared/lib/queryClientDynamic";
+import { GetQueryClientDynamic } from "@/features/shared/lib/query-client-dynamic";
 import { toast } from "sonner";
 
 type c = { message: MarkdownItem[]; chatId_?: string };
@@ -21,7 +21,7 @@ function useChat() {
   const currentModel = usePreference((state) => state.currentModel);
 
   const queryClient = useQueryClient();
-  const queryClientDynamic = getQueryClientDynamic();
+  const queryClientDynamic = GetQueryClientDynamic();
 
   const createChat = useMutation({
     mutationKey: chatKeys.list(),

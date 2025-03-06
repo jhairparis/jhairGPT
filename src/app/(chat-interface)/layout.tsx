@@ -2,7 +2,7 @@ import Provider from "@/features/chat-interface/providers";
 import AppSidebar from "@/features/chat-interface/components/sidebar";
 import History from "@/features/chat-interface/components/history";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { getQueryClientDynamic } from "@/features/shared/lib/queryClientDynamic";
+import { GetQueryClientDynamic } from "@/features/shared/lib/query-client-dynamic";
 import { cookies } from "next/headers";
 import { chatKeys } from "@/features/chat-interface/utils/chat-queries";
 import { getChatsServer } from "@/features/chat-interface/utils/service-chat";
@@ -19,7 +19,7 @@ export default async function ChatInterfaceLayout({ children }: ChatInterfaceLay
   const defaultOpen = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === "true";
   const { authCookies } = await getAuth(cookieStore);
 
-  const queryClient = getQueryClientDynamic();
+  const queryClient = GetQueryClientDynamic();
 
   await queryClient.prefetchQuery({
     queryKey: chatKeys.list(),
