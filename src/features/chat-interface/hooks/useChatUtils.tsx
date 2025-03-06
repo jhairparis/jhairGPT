@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Message } from "../../chat-interface/utils/chat-queries";
+import { Message } from "../utils/chat-queries";
 
 function useChatUtils() {
   const pathname = usePathname();

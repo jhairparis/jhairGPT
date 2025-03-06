@@ -2,7 +2,7 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import queryClientSpeak from "../constants/speak";
-import Header from "@/features/shared/components/header";
+import Header from "@/features/chat-interface/components/header";
 import { TextInput } from "./text-input";
 
 const Speak = ({ children }: any) => {

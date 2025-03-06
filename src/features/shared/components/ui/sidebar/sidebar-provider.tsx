@@ -6,7 +6,7 @@ import { cn } from "@/features/shared/lib/utils";
 import {
   SIDEBAR_COOKIE_MAX_AGE,
   SIDEBAR_COOKIE_NAME,
-} from "@/features/shared/constants/sidebar";
+} from "@/features/chat-interface/constants/sidebar";
 
 export type SidebarContextType = {
   state: "expanded" | "collapsed";

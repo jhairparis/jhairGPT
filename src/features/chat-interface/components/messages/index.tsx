@@ -4,7 +4,7 @@ import ActionsButtons from "./assistant-bubble/ActionsButtons";
 import UserBubble from "./user-bubble";
 import { AiOutlineLoading } from "react-icons/ai";
 import { notFound } from "next/navigation";
-import useChatUtils from "@/features/shared/hooks/useChatUtils";
+import useChatUtils from "@/features/chat-interface/hooks/useChatUtils";
 
 const Messages = () => {
   const { chatQuery } = useChatUtils();

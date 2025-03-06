@@ -1,4 +1,4 @@
-import { AUTH_COOKIE, CSRF_COOKIE } from "@/features/shared/constants/cookies";
+import { AUTH_COOKIE, CSRF_COOKIE } from "@/features/auth/constants/cookies";
 import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export async function getAuth(cookieStore: ReadonlyRequestCookies) {

@@ -1,13 +1,13 @@
 import Provider from "@/features/chat-interface/providers";
-import AppSidebar from "@/features/shared/components/sidebar";
-import History from "@/features/shared/components/history";
+import AppSidebar from "@/features/chat-interface/components/sidebar";
+import History from "@/features/chat-interface/components/history";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClientDynamic } from "@/features/shared/lib/queryClientDynamic";
 import { cookies } from "next/headers";
 import { chatKeys } from "@/features/chat-interface/utils/chat-queries";
 import { getChatsServer } from "@/features/chat-interface/utils/service-chat";
 import { getAuth } from "@/features/auth/utils/auth";
-import { SIDEBAR_COOKIE_NAME } from "@/features/shared/constants/sidebar";
+import { SIDEBAR_COOKIE_NAME } from "@/features/chat-interface/constants/sidebar";
 import Speak from "@/features/chat-interface/components/Speak";
 
 type ChatInterfaceLayoutProps = Readonly<{

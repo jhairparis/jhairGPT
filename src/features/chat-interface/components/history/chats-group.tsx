@@ -11,7 +11,7 @@ import {
   SidebarGroupLabel,
   SidebarGroupContent,
   SidebarMenu,
-} from "../ui/sidebar";
+} from "../../../shared/components/ui/sidebar";
 import { ChatsItem } from "./chats-item";
 import { DATE_GROUP_LABELS } from "../../constants/date-groups";
 import { Chat } from "@/features/chat-interface/types";

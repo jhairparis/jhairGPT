@@ -4,14 +4,14 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarMenuAction,
-} from "../ui/sidebar";
+} from "../../../shared/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "../../../shared/components/ui/dropdown-menu";
 import { Chat } from "@/features/chat-interface/types";
 
 interface ChatsItemProps {
