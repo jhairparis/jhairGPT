@@ -65,7 +65,6 @@ const TextInput = () => {
     setShow(state.show);
   }, []);
 
-  // Función auxiliar para dividir arreglo de nodos de texto
   const splitNodes = (nodes: any[], offset: number) => {
     let before: any[] = [];
     let after: any[] = [];
@@ -90,9 +89,7 @@ const TextInput = () => {
     return { before, after };
   };
 
-  // Función auxiliar para verificar contenido vacío (aplica tanto para cadenas o arreglos de nodos)
   const isEmptyContent = (rawContent: any): boolean => {
-    // Si es un arreglo: se considera vacío si no hay nodos o si solo hay un nodo vacío
     if (Array.isArray(rawContent)) {
       return (
         rawContent.length === 0 ||
@@ -100,37 +97,271 @@ const TextInput = () => {
           (!rawContent[0].text || rawContent[0].text.trim() === ""))
       );
     }
-    // Si es string, se considera vacío si es una cadena vacía o solo espacios
     return !rawContent || rawContent.trim() === "";
   };
 
-  const handleInsertNewLine = async () => {
-    let computedOffset = 0;
+  /**
+   * Calculates the line and column from a text and an offset.
+   * @param text Full text of the block (e.g., from a codeBlock)
+   * @param offset Caret position (index in the string)
+   * @returns Object with line and column number (both starting at 1)
+   */
+  function getCaretLineAndColumn(
+    text: string,
+    offset: number
+  ): { line: number; column: number } {
+    const beforeCaret = text.slice(0, offset);
+    const lines = beforeCaret.split("\n");
+    return {
+      line: lines.length,
+      column: lines[lines.length - 1].length + 1,
+    };
+  }
+
+  /**
+   * Function to get the correct offset inside a code block
+   */
+  function getCodeBlockCaretOffset(blockId: string): number {
     const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return 0;
+
+    const range = selection.getRangeAt(0);
+
+    // First, we try to find the code block element using different selectors
+    const blockElement = document.querySelector(`[data-id="${blockId}"]`);
+    if (!blockElement) {
+      return 0;
+    }
+
+    // Find the specific code containers
+    const codeContainer =
+      blockElement.querySelector(".bn-inline-content") ||
+      blockElement.querySelector("code") ||
+      blockElement.querySelector(".bn-block-content");
+
+    if (!codeContainer) return 0;
+
+    // We calculate the real offset by traversing all text nodes
+    // within the code block until we reach the node where the caret is
+    let offset = 0;
+    const walker = document.createTreeWalker(
+      codeContainer,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+
+    let currentNode = walker.nextNode();
+    while (currentNode) {
+      if (currentNode === range.startContainer) {
+        offset += range.startOffset;
+        break;
+      } else {
+        offset += currentNode.textContent?.length || 0;
+      }
+      currentNode = walker.nextNode();
+    }
+
+    // If we don't find the specific node, the caret might be in a child element
+    // We try to get the offset from the full content
+    if (!currentNode) {
+      const allText = Array.from(codeContainer.querySelectorAll("*"))
+        .map((el) => el.textContent || "")
+        .join("");
+
+      // Estimation based on relative position
+      const textBefore =
+        selection.anchorNode?.textContent?.substring(
+          0,
+          selection.anchorOffset
+        ) || "";
+      offset = allText.indexOf(textBefore) + textBefore.length;
+    }
+
+    return offset;
+  }
+
+  /**
+   * Function to position the caret at a specific position inside a code block
+   */
+  function setCursorPositionInCodeBlock(blockId: string, targetOffset: number) {
+    // We need a longer timeout to ensure BlockNote has finished its updates
+    // and also to prevent flickering with multiple caret position updates
+
+    // First, we prevent the cursor from jumping to the start by setting a "caret placeholder"
+    const blockElement = document.querySelector(`[data-id="${blockId}"]`);
+    if (blockElement) {
+      // This helps keep the focus on the element during the update
+      const focusableElement = blockElement.querySelector(
+        "[contenteditable=true]"
+      );
+      if (focusableElement instanceof HTMLElement) {
+        focusableElement.focus();
+      }
+    }
+
+    // We use two timers: a quick one for an initial approximation, and a slower one to ensure the final position
+    setTimeout(() => {
+      positionCaret(blockId, targetOffset);
+
+      // Second pass to ensure the position is correct
+      setTimeout(() => {
+        positionCaret(blockId, targetOffset);
+      }, 100);
+    }, 10);
+
+    function positionCaret(blockId: string, targetOffset: number) {
+      const blockElement = document.querySelector(`[data-id="${blockId}"]`);
+      if (!blockElement) return;
+
+      // Find the appropriate code container
+      const codeContainer =
+        blockElement.querySelector(".bn-inline-content") ||
+        blockElement.querySelector("code") ||
+        blockElement.querySelector(".bn-block-content");
+
+      if (!codeContainer) return;
+
+      // We use TreeWalker to find the text node and the appropriate position
+      let currentOffset = 0;
+      let foundNode: Text | null = null;
+      let nodeOffset = 0;
+
+      const walker = document.createTreeWalker(
+        codeContainer,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      let textNode = walker.nextNode() as Text;
+      while (textNode) {
+        const nodeLength = textNode.textContent?.length || 0;
+        if (currentOffset + nodeLength >= targetOffset) {
+          foundNode = textNode;
+          nodeOffset = targetOffset - currentOffset;
+          break;
+        }
+        currentOffset += nodeLength;
+        textNode = walker.nextNode() as Text;
+      }
+
+      // If we find the appropriate node, we create a selection at that point
+      if (foundNode) {
+        const range = document.createRange();
+        const selection = window.getSelection();
+
+        try {
+          range.setStart(foundNode, nodeOffset);
+          range.collapse(true);
+
+          if (selection) {
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            // Important: make the element have focus
+            const focusableElement = blockElement.querySelector(
+              "[contenteditable=true]"
+            );
+            if (focusableElement instanceof HTMLElement) {
+              focusableElement.focus();
+
+              // Ensure the cursor is visible in the view
+              const rect = range.getBoundingClientRect();
+              if (rect) {
+                focusableElement.scrollIntoView({ block: "nearest" });
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Error positioning cursor:", e);
+        }
+      }
+    }
+  }
+
+  const handleInsertNewLine = async () => {
+    const cursor = editor.getTextCursorPosition() as any;
+    const currentBlock = cursor.block;
+    let computedOffset = cursor.offset ?? 0;
+
+    // If it's a code block, we need to calculate the offset differently
+    if (currentBlock.type === "codeBlock") {
+      // Use the new function to get the offset
+      computedOffset = getCodeBlockCaretOffset(currentBlock.id);
+
+      // Get the caret position (line and column)
+      const codeText = currentBlock.content[0]?.text || "";
+      const position = getCaretLineAndColumn(codeText, computedOffset);
+
+      // For code blocks, insert a newline at the caret position
+      if (codeText) {
+        // Prevent BlockNote from taking control of the cursor by temporarily disabling focus
+        const activeElement = document.activeElement;
+        if (activeElement instanceof HTMLElement) {
+          activeElement.blur();
+        }
+
+        const updatedCode =
+          codeText.substring(0, computedOffset) +
+          "\n" +
+          codeText.substring(computedOffset);
+
+        editor.updateBlock(currentBlock.id, {
+          content: [
+            {
+              type: "text",
+              text: updatedCode,
+              styles: {},
+            },
+          ],
+        });
+
+        // Position the cursor after the inserted newline
+        const newPosition = computedOffset + 1; // +1 to place it after the newline
+        setCursorPositionInCodeBlock(currentBlock.id, newPosition);
+
+        return;
+      }
+    }
+
+    // From here, restore the original code for other block types
+    let selection = window.getSelection();
     if (selection && typeof selection.focusOffset === "number") {
       computedOffset = selection.focusOffset;
     }
-    const cursor = editor.getTextCursorPosition() as any;
     computedOffset = computedOffset || (cursor.offset ?? 0);
 
-    const currentBlock = cursor.block;
     const rawContent = currentBlock.content;
     const newId = crypto.randomUUID();
 
     if (currentBlock.type === "table") return;
 
-    // Caso especial: elementos de lista
+    // Special logic for list items
     if (
       currentBlock.type === "checkListItem" ||
       currentBlock.type === "bulletListItem" ||
       currentBlock.type === "numberedListItem"
     ) {
-      // Si el contenido del bloque es vacío, se convierte el bloque a "paragraph"
-      if (isEmptyContent(rawContent)) {
-        editor.updateBlock(currentBlock.id, { type: "paragraph" });
-        editor.setTextCursorPosition(currentBlock.id, "start");
-        return;
+      // SPECIAL CASE: If the cursor is at the beginning of the list block (offset = 0)
+      if (computedOffset === 0) {
+        // If the block is empty, convert it to a paragraph
+        if (isEmptyContent(rawContent)) {
+          editor.updateBlock(currentBlock.id, { type: "paragraph" });
+          editor.setTextCursorPosition(currentBlock.id, "start");
+          return;
+        }
+        // If the block has content, insert a new block before
+        else {
+          editor.insertBlocks(
+            [{ id: newId, type: currentBlock.type, content: "" }],
+            currentBlock.id,
+            "before"
+          );
+          editor.setTextCursorPosition(newId, "start");
+          return;
+        }
       }
+
+      // For the rest of the cases (cursor is not at the beginning)
       if (Array.isArray(rawContent)) {
         const { before, after } = splitNodes(rawContent, computedOffset);
         editor.updateBlock(currentBlock.id, { content: before });
@@ -154,8 +385,8 @@ const TextInput = () => {
       return;
     }
 
-    // Para otros tipos, dividimos en 2 bloques
-    // Se fuerza a "paragraph" si el bloque actual es "heading"
+    // For other types, we divide into 2 blocks
+    // It is forced to "paragraph" if the current block is "heading"
     const allowedTypes = ["heading", "paragraph"];
     const newBlockType =
       currentBlock.type === "heading"
@@ -164,6 +395,22 @@ const TextInput = () => {
         ? currentBlock.type
         : "paragraph";
 
+    // SPECIAL CASE: If the cursor is at the beginning of the block (offset = 0)
+    if (computedOffset === 0) {
+      // Only insert a new block if the current block has content
+      if (!isEmptyContent(rawContent)) {
+        // Insert an empty block BEFORE the current one, keeping all the content in the current block
+        editor.insertBlocks(
+          [{ id: newId, type: newBlockType, content: "" }],
+          currentBlock.id,
+          "before"
+        );
+        editor.setTextCursorPosition(newId, "start");
+        return;
+      }
+    }
+
+    // Rest of cases - divide the block in two
     if (Array.isArray(rawContent)) {
       const totalLength = rawContent.reduce(
         (sum, node) => sum + (node.text?.length || 0),
@@ -203,7 +450,9 @@ const TextInput = () => {
         );
       }
     }
-    editor.setTextCursorPosition(newId, "start");
+
+    if (currentBlock.type !== "codeBlock")
+      editor.setTextCursorPosition(newId, "start");
   };
 
   const handleSend = async () => {
@@ -214,14 +463,8 @@ const TextInput = () => {
       countImgLinks: number;
     };
 
-    toast.warning("This feature is not available yet");
-    console.log(markdown, countImgLinks);
-    return;
-
     const clearEditorBlocks = () =>
       editor.removeBlocks([...editor.document.map((block) => block.id)]);
-
-    console.log("ready to send", markdown);
 
     if (!chatId) {
       createChat.mutate(
@@ -242,14 +485,13 @@ const TextInput = () => {
 
   const shortcuts = async (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
-      // Shift+Enter o Ctrl+Enter: insertar nueva línea combinada
+      // Shift+Enter or Ctrl+Enter: insert combined new line
       if (event.shiftKey || event.ctrlKey) {
         event.preventDefault();
-        toast.warning("Inserción de nueva línea");
         handleInsertNewLine();
         return;
       }
-      // Plain Enter cuando el menú de sugerencias no está visible: enviar mensaje
+      // Plain Enter when the suggestion menu is not visible: send message
       if (!event.shiftKey && !event.ctrlKey && !event.altKey && !show) {
         event.preventDefault();
         handleSend();
