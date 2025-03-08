@@ -1,25 +1,26 @@
 import type { PreferenceStoreState } from "@/features/shared/providers/preference-provider";
 import { MarkdownItem } from "../components/text-input/text-input";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { ChatHistory, ChatList } from "../types";
 import { Backend_url } from "@/features/shared/constants/query";
-import { notFound } from "next/navigation";
-
-const handleError = (error: any, where: string) => {
-  return { message: error, where };
-};
+import {
+  ChatHistoryApi,
+  ChatListApi,
+  InitChatApi,
+  UpdateChatApi,
+} from "../types/service-chat";
 
 export const getChatServer = async (
   chatId: string,
   cookies: RequestCookie[] | null
 ) => {
-  if (!cookies) throw new Error("No cookies");
-
   try {
-    const cookieHeader = cookies
-      .filter((cookie): cookie is RequestCookie => cookie !== undefined)
-      .map((cookie) => `${cookie.name}=${cookie.value}`)
-      .join("; ");
+    let cookieHeader = "";
+
+    if (cookies)
+      cookieHeader = cookies
+        .filter((cookie): cookie is RequestCookie => cookie !== undefined)
+        .map((cookie) => `${cookie.name}=${cookie.value}`)
+        .join("; ");
 
     const response = await fetch(`${Backend_url}/gpt/chat/${chatId}`, {
       headers: {
@@ -29,42 +30,46 @@ export const getChatServer = async (
       next: { revalidate: 60 },
     });
 
-    if (!response.ok)
-      return null;
+    if (!response.ok) return null;
 
-    const data: { result: ChatHistory["result"] } = await response.json();
+    const valid = ChatHistoryApi.parse(await response.json());
 
-    return data.result;
+    return valid.result;
   } catch (error) {
-    return { error: JSON.parse(error as string) };
+    return null;
   }
 };
 
 export const getChat = async (chatId: string) => {
-  if (!chatId) throw new Error("No chatId");
-
   try {
+    if (!chatId) throw new Error("No chatId");
+
     const response = await fetch(`${Backend_url}/gpt/chat/${chatId}`, {
       credentials: "include",
       next: { revalidate: 60 },
     });
-    const data = (await response.json()) as { result: ChatHistory["result"] };
-    return data.result;
+
+    if (!response.ok) return null;
+
+    const valid = ChatHistoryApi.parse(await response.json());
+
+    return valid.result;
   } catch (error) {
-    return { error: JSON.parse(error as string) };
+    return null;
   }
 };
 
 export const getChatsServer = async (
   cookies: RequestCookie[] | undefined | null
 ) => {
-  if (!cookies) throw new Error("No cookies");
-
   try {
-    const cookieHeader = cookies
-      .filter((cookie): cookie is RequestCookie => cookie !== undefined)
-      .map((cookie) => `${cookie.name}=${cookie.value}`)
-      .join("; ");
+    let cookieHeader = "";
+
+    if (cookies)
+      cookieHeader = cookies
+        .filter((cookie): cookie is RequestCookie => cookie !== undefined)
+        .map((cookie) => `${cookie.name}=${cookie.value}`)
+        .join("; ");
 
     const response = await fetch(`${Backend_url}/gpt/chat`, {
       headers: {
@@ -74,28 +79,31 @@ export const getChatsServer = async (
       next: { revalidate: 20 },
     });
 
-    if (!response.ok)
-      return Promise.reject(handleError(response.statusText, "server1"));
+    if (!response.ok) return null;
 
-    const data: { result: ChatList["result"] } = await response.json();
+    const valid = ChatListApi.parse(await response.json());
 
-    return data.result;
+    return valid.result;
   } catch (error) {
-    return Promise.reject(handleError(error, "server"));
+    return null;
   }
 };
 
 export const getChats = async () => {
-  const response = await fetch(`${Backend_url}/gpt/chat`, {
-    credentials: "include",
-    next: { revalidate: 20 },
-  });
+  try {
+    const response = await fetch(`${Backend_url}/gpt/chat`, {
+      credentials: "include",
+      next: { revalidate: 20 },
+    });
 
-  const data: { result: ChatList["result"] } = await response.json();
+    if (!response.ok) return null;
 
-  if (!data.result) return response.status;
+    const valid = ChatListApi.parse(await response.json());
 
-  return data.result;
+    return valid.result;
+  } catch (error) {
+    return null;
+  }
 };
 
 export const initializeChat = async (
@@ -115,13 +123,11 @@ export const initializeChat = async (
     }),
   });
 
-  const data: {
-    result: ChatHistory["result"];
-    chatId: string;
-    message: string;
-  } = await response.json();
+  const data = await response.json();
 
-  return data;
+  const valid = InitChatApi.parse(data);
+
+  return valid;
 };
 
 export const chatting = async (
@@ -143,8 +149,10 @@ export const chatting = async (
     }),
     next: { revalidate: 120 },
   });
-  const data = (await response.json()) as { result: ChatHistory["result"] };
-  return data.result;
+
+  const valid = UpdateChatApi.parse(await response.json());
+
+  return valid.result;
 };
 
 export const removeChatById = async (chatId: string) => {

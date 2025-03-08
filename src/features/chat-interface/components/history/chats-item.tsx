@@ -12,10 +12,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../../shared/components/ui/dropdown-menu";
-import { Chat } from "@/features/chat-interface/types";
+import { ChatListType } from "../../types/chat-document";
 
 interface ChatsItemProps {
-  chat: Chat;
+  chat: ChatListType;
   isActive: boolean;
   onDelete: () => void;
 }

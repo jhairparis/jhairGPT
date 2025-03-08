@@ -15,7 +15,7 @@ const History = () => {
 
   if (isPending) return <ChatsLoading />;
 
-  if (isError || Object.keys(data).length === 0) {
+  if (isError || data === null) {
     return (
       <ChatsError
         error={
@@ -25,7 +25,7 @@ const History = () => {
     );
   }
 
-  const keys = Object.keys(data);
+  const keys = Object.keys(data) as Array<keyof typeof data>;
 
   return (
     <>
@@ -33,7 +33,7 @@ const History = () => {
         <ChatsGroup
           key={key as string}
           groupKey={key as string}
-          chats={(data as any)[key as any] as any}
+          chats={data[key]}
         />
       ))}
     </>
