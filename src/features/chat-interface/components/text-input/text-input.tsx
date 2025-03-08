@@ -15,7 +15,6 @@ import { usePathname } from "next/navigation";
 import SideMenuCustom from "./custom/side-menu";
 import uploadFile from "../../utils/uploadFiles";
 import { splitMarkdown } from "../../utils/general";
-import { toast } from "sonner";
 
 export type MarkdownItem = {
   type: string;

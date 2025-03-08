@@ -11,11 +11,7 @@ import {
 } from "@/features/shared/components/ui/select";
 import useModels from "../../hooks/use-models";
 import { usePreference } from "@/features/shared/providers/preference-provider";
-
-interface Model {
-  company: string;
-  available: string[];
-}
+import { toast } from "sonner";
 
 const SelectModel = () => {
   const { data: models, isPending, isError, error } = useModels();
@@ -28,7 +24,20 @@ const SelectModel = () => {
   };
 
   if (isError) {
-    return <div>Error loading models: {error?.message}</div>;
+    toast.error("Failed to load models");
+
+    return (
+      <Select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder={currentModel.model} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="undefined">Not models available</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    );
   }
 
   if (isPending) {
@@ -60,10 +69,10 @@ const SelectModel = () => {
         <SelectValue placeholder={currentModel.model} />
       </SelectTrigger>
       <SelectContent>
-        {models?.map((model: Model, i: number) => (
+        {models.map((model, i) => (
           <SelectGroup key={i}>
             <SelectLabel>{model.company}</SelectLabel>
-            {model.available.map((available: string, j: number) => (
+            {model.available.map((available, j) => (
               <SelectItem
                 value={JSON.stringify({
                   company: model.company,

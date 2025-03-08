@@ -4,6 +4,7 @@ import React from "react";
 import queryClientSpeak from "../constants/speak";
 import Header from "@/features/chat-interface/components/header";
 import { TextInput } from "./text-input";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const Speak = ({ children }: any) => {
   return (
@@ -17,7 +18,7 @@ const Speak = ({ children }: any) => {
           </footer>
         </div>
       </div>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
