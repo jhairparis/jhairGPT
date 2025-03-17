@@ -118,65 +118,181 @@ const TextInput = () => {
   }
 
   /**
-   * Function to get the correct offset inside a code block
+   * Improved function to get the correct cursor offset inside a code block
+   * with special handling for just-typed content
    */
   function getCodeBlockCaretOffset(blockId: string): number {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return 0;
 
     const range = selection.getRangeAt(0);
-
-    // First, we try to find the code block element using different selectors
+    
+    // Find the block element
     const blockElement = document.querySelector(`[data-id="${blockId}"]`);
-    if (!blockElement) {
-      return 0;
-    }
+    if (!blockElement) return 0;
 
-    // Find the specific code containers
-    const codeContainer =
-      blockElement.querySelector(".bn-inline-content") ||
-      blockElement.querySelector("code") ||
-      blockElement.querySelector(".bn-block-content");
+    // Try to find the most specific code container possible
+    const codeContainers = [
+      blockElement.querySelector("pre > code"),
+      blockElement.querySelector(".bn-code-block"),
+      blockElement.querySelector(".bn-inline-content"),
+      blockElement.querySelector("code"),
+      blockElement.querySelector(".bn-block-content"),
+      blockElement.querySelector("[contenteditable=true]"),
+    ].filter(Boolean);
 
+    // Use the first valid container found
+    const codeContainer = codeContainers[0];
     if (!codeContainer) return 0;
 
-    // We calculate the real offset by traversing all text nodes
-    // within the code block until we reach the node where the caret is
-    let offset = 0;
-    const walker = document.createTreeWalker(
-      codeContainer,
-      NodeFilter.SHOW_TEXT,
-      null
-    );
-
-    let currentNode = walker.nextNode();
-    while (currentNode) {
-      if (currentNode === range.startContainer) {
-        offset += range.startOffset;
-        break;
-      } else {
-        offset += currentNode.textContent?.length || 0;
+    // Get the full text content
+    const fullText = codeContainer.textContent || "";
+    
+    // When typing, we often need to handle the specific case where the cursor is at the end
+    // Check if selection is at the end of the container's text
+    const editorCursor = editor.getTextCursorPosition() as any;
+    const codeText = editorCursor?.block?.content?.[0]?.text || "";
+    
+    // SPECIAL CASE: Check if the cursor is at the end of the last text node
+    // This specifically helps after typing at the end of a code block
+    if (range.collapsed) {
+      // Check if we're at the end of a text node
+      if (range.startContainer.nodeType === Node.TEXT_NODE &&
+          range.startOffset === range.startContainer.textContent?.length) {
+            
+        // Check if this is the last text node or close to it
+        const lastTextNodes = [];
+        const walker = document.createTreeWalker(
+          codeContainer, 
+          NodeFilter.SHOW_TEXT, 
+          null
+        );
+        
+        let node;
+        while (node = walker.nextNode()) {
+          lastTextNodes.push(node);
+          // Keep only last 3 nodes for efficiency
+          if (lastTextNodes.length > 3) {
+            lastTextNodes.shift();
+          }
+        }
+        
+        // If our node is one of the last text nodes, return end of text
+        if (lastTextNodes.includes(range.startContainer)) {
+          return codeText.length;
+        }
       }
-      currentNode = walker.nextNode();
+    }
+    
+    // Method 1: Direct calculation with TreeWalker
+    let treeWalkerOffset = 0;
+    let foundCursorInTreeWalk = false;
+    
+    try {
+      const walker = document.createTreeWalker(
+        codeContainer,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      let currentNode = walker.nextNode();
+      while (currentNode) {
+        // Check if this is the node where the cursor is
+        if (currentNode === range.startContainer) {
+          treeWalkerOffset += range.startOffset;
+          foundCursorInTreeWalk = true;
+          break;
+        } 
+        
+        // Otherwise add this node's length to the offset
+        treeWalkerOffset += currentNode.textContent?.length || 0;
+        currentNode = walker.nextNode();
+      }
+    } catch (e) {
+      console.error("Error in TreeWalker calculation:", e);
     }
 
-    // If we don't find the specific node, the caret might be in a child element
-    // We try to get the offset from the full content
-    if (!currentNode) {
-      const allText = Array.from(codeContainer.querySelectorAll("*"))
-        .map((el) => el.textContent || "")
-        .join("");
-
-      // Estimation based on relative position
-      const textBefore =
-        selection.anchorNode?.textContent?.substring(
-          0,
-          selection.anchorOffset
-        ) || "";
-      offset = allText.indexOf(textBefore) + textBefore.length;
+    // Method 2: Direct cursor position from editor
+    const cursor = editor.getTextCursorPosition() as any;
+    const editorReportedOffset = cursor?.offset || 0;
+    
+    // Method 3: Calculation based on selected text and DOM structure
+    let contextBasedOffset = 0;
+    try {
+      // Get actual block content from the editor's data model
+      const blockContent = cursor?.block?.content?.[0]?.text || "";
+      
+      // If the selection is at the boundary of an element
+      if (range.collapsed && blockContent) {
+        // Get the text node and its parent element
+        const textNode = range.startContainer;
+        const textContent = textNode.textContent || "";
+        
+        // If we're in a text node, we can get a more precise position
+        if (textNode.nodeType === Node.TEXT_NODE) {
+          const nearbyText = textContent.substring(
+            Math.max(0, range.startOffset - 10),
+            Math.min(textContent.length, range.startOffset + 10)
+          );
+          
+          // Find this nearby text in the full content
+          if (nearbyText && blockContent.includes(nearbyText)) {
+            // Find all occurrences of this text
+            let searchIndex = 0;
+            let foundIndex;
+            let occurrences = [];
+            
+            while ((foundIndex = blockContent.indexOf(nearbyText, searchIndex)) !== -1) {
+              occurrences.push(foundIndex);
+              searchIndex = foundIndex + 1;
+            }
+            
+            if (occurrences.length === 1) {
+              // Simple case - only one match
+              const matchPosition = occurrences[0];
+              const localOffset = range.startOffset - Math.max(0, range.startOffset - 10);
+              contextBasedOffset = matchPosition + localOffset;
+            } else if (occurrences.length > 1) {
+              // Multiple matches - try to find the best one based on context
+              // For now, just use the first occurrence
+              contextBasedOffset = occurrences[0] + 
+                (range.startOffset - Math.max(0, range.startOffset - 10));
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error in context-based calculation:", e);
     }
 
-    return offset;
+    // Choose the most reliable offset based on available information
+    let finalOffset = 0;
+    
+    if (foundCursorInTreeWalk && treeWalkerOffset <= fullText.length) {
+      // The tree walker method is usually the most reliable
+      finalOffset = treeWalkerOffset;
+    } else if (contextBasedOffset > 0) {
+      // Context-based calculation is the next best option
+      finalOffset = contextBasedOffset;
+    } else {
+      // Fall back to editor-reported offset
+      finalOffset = editorReportedOffset;
+    }
+
+    // CRITICAL: si el computedOffset resulta 0 y hay texto,
+    // comprobamos si el cursor realmente está al inicio.
+    if (treeWalkerOffset === 0 && codeText.length > 0) {
+      if (selection.rangeCount > 0) {
+        const r = selection.getRangeAt(0);
+        // Si el startOffset es distinto de 0, significa que no está al inicio
+        if (r.startOffset !== 0) {
+          return codeText.length;
+        }
+      }
+    }
+
+    // Safety check
+    return Math.min(finalOffset, fullText.length);
   }
 
   /**
@@ -277,58 +393,145 @@ const TextInput = () => {
     }
   }
 
+  /**
+   * Gets the absolute cursor offset position within any block type
+   * Provides a uniform way to get cursor position across all block types
+   */
+  function getAbsoluteCursorOffset(blockId: string): number {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return 0;
+
+    const range = selection.getRangeAt(0);
+
+    // Find the block element
+    const blockElement = document.querySelector(`[data-id="${blockId}"]`);
+    if (!blockElement) {
+      return 0;
+    }
+
+    // Find the content container
+    const contentContainer = 
+      blockElement.querySelector(".bn-block-content") ||
+      blockElement.querySelector("[contenteditable=true]");
+
+    if (!contentContainer) return 0;
+
+    // Calculate the real offset by traversing all text nodes
+    let offset = 0;
+    const walker = document.createTreeWalker(
+      contentContainer,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+
+    let currentNode = walker.nextNode();
+    while (currentNode) {
+      if (currentNode === range.startContainer) {
+        offset += range.startOffset;
+        break;
+      } else {
+        offset += currentNode.textContent?.length || 0;
+      }
+      currentNode = walker.nextNode();
+    }
+
+    // If we don't find the specific node, try to estimate position
+    if (!currentNode) {
+      const allText = Array.from(contentContainer.querySelectorAll("*"))
+        .map((el) => el.textContent || "")
+        .join("");
+
+      const textBefore =
+        selection.anchorNode?.textContent?.substring(
+          0,
+          selection.anchorOffset
+        ) || "";
+      offset = allText.indexOf(textBefore) + textBefore.length;
+    }
+
+    return offset;
+  }
+
   const handleInsertNewLine = async () => {
     const cursor = editor.getTextCursorPosition() as any;
     const currentBlock = cursor.block;
-    let computedOffset = cursor.offset ?? 0;
-
-    // If it's a code block, we need to calculate the offset differently
+    
+    // Special handling for code blocks
     if (currentBlock.type === "codeBlock") {
-      // Use the new function to get the offset
-      computedOffset = getCodeBlockCaretOffset(currentBlock.id);
+      try {
+        // Get code text from the block's content
+        const codeText = currentBlock.content[0]?.text || "";
+        
+        // Get cursor position with our improved method
+        let computedOffset = getCodeBlockCaretOffset(currentBlock.id);
+        
+        // Critical fix: If offset still appears to be 0 but text exists,
+        // and we suspect cursor is at the end, force it to end of text
+        if (computedOffset === 0 && codeText.length > 0) {
+          // We're handling the case where detection isn't working properly after typing
+          // Get selection info to verify we're likely at the end
+          const selection = window.getSelection();
+          if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            // If the selection is collapsed (just a cursor) we might be at the end
+            if (range.collapsed) {
+              computedOffset = codeText.length;
+            }
+          }
+        }
+        
+        // Si computedOffset es 0 pero el cursor está realmente al inicio (startOffset===0) se mantiene; de lo contrario se forza a final
+        if (computedOffset === 0 && codeText.length > 0) {
+          const sel = window.getSelection();
+          if (sel && sel.rangeCount > 0) {
+            const r = sel.getRangeAt(0);
+            if (r.startOffset !== 0) {
+              computedOffset = codeText.length;
+            }
+          }
+        }
 
-      // Get the caret position (line and column)
-      const codeText = currentBlock.content[0]?.text || "";
-      const position = getCaretLineAndColumn(codeText, computedOffset);
-
-      // For code blocks, insert a newline at the caret position
-      if (codeText) {
-        // Prevent BlockNote from taking control of the cursor by temporarily disabling focus
+        // Create a small delay to let any DOM updates finish
         const activeElement = document.activeElement;
         if (activeElement instanceof HTMLElement) {
           activeElement.blur();
         }
 
-        const updatedCode =
-          codeText.substring(0, computedOffset) +
-          "\n" +
+        // Now insert the newline at the correct position
+        const updatedCode = 
+          codeText.substring(0, computedOffset) + 
+          "\n" + 
           codeText.substring(computedOffset);
-
+        
+        // Update the block with the new content
         editor.updateBlock(currentBlock.id, {
-          content: [
-            {
-              type: "text",
-              text: updatedCode,
-              styles: {},
-            },
-          ],
+          content: [{
+            type: "text",
+            text: updatedCode,
+            styles: {}
+          }]
         });
-
-        // Position the cursor after the inserted newline
-        const newPosition = computedOffset + 1; // +1 to place it after the newline
-        setCursorPositionInCodeBlock(currentBlock.id, newPosition);
-
+        
+        // Position cursor after the newline with multiple attempts for robustness
+        const newPosition = computedOffset + 1;
+        
+        // Use multiple positioning attempts with increasing timeouts
+        [20, 50, 100].forEach(delay => {
+          setTimeout(() => {
+            setCursorPositionInCodeBlock(currentBlock.id, newPosition);
+          }, delay);
+        });
+        
         return;
+      } catch (e) {
+        console.error("Error handling code block newline:", e);
       }
     }
 
-    // From here, restore the original code for other block types
-    let selection = window.getSelection();
-    if (selection && typeof selection.focusOffset === "number") {
-      computedOffset = selection.focusOffset;
-    }
-    computedOffset = computedOffset || (cursor.offset ?? 0);
-
+    // For non-code blocks, use the unified approach
+    let computedOffset = getAbsoluteCursorOffset(currentBlock.id);
+    
+    // From here, handle other block types
     const rawContent = currentBlock.content;
     const newId = crypto.randomUUID();
 
